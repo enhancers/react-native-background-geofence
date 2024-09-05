@@ -2,7 +2,7 @@
   "name": "react-native-background-geofence",
   "version": "0.1.0",
   "description": "background geofence",
-  "source": "./src/index.tsx",
+  "source": "./src/index.js",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "exports": {
@@ -85,6 +85,9 @@
   },
   "resolutions": {
     "@types/react": "^18.2.44"
+  },
+  "dependencies": {
+    "react-native-background-fetch": "~4.2.5"
   },
   "peerDependencies": {
     "react": "*",
