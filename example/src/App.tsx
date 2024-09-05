@@ -1,17 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-background-geofence';
+import BackgroundGeofence from 'react-native-background-geofence';
 
 export default function App() {
-  const [result, setResult] = useState<number | undefined>();
-
   useEffect(() => {
-    multiply(3, 7).then(setResult);
+    BackgroundGeofence.addGeofence({
+      identifier: 'Home',
+      radius: 200,
+      latitude: 45.51921926,
+      longitude: -73.61678581,
+      notifyOnEntry: true,
+      notifyOnExit: true,
+      extras: {
+        route_id: 1234,
+      },
+    })
+      .then((res) => console.log('asd', res))
+      .catch((e) => console.error(e));
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>TEST GEOFENCE</Text>
     </View>
   );
 }
