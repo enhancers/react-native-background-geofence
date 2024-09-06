@@ -6,6 +6,13 @@ import {
 } from 'react-native';
 import type { Boundary } from './types';
 
+const TAG = 'RNBackgroundGeofence';
+
+export const Events = {
+  EXIT: 'onExit',
+  ENTER: 'onEnter',
+};
+
 const LINKING_ERROR =
   `The package 'react-native-my-react-native-library' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
@@ -23,14 +30,7 @@ export const RNBackgroundGeofence = NativeModules.RNBackgroundGeofence
       }
     );
 
-const TAG = 'RNBackgroundGeofence';
-
 const boundaryEventEmitter = new NativeEventEmitter(RNBackgroundGeofence);
-
-export const Events = {
-  EXIT: 'onExit',
-  ENTER: 'onEnter',
-};
 
 const HeadlessBoundaryEventTask = async ({
   event,
@@ -44,6 +44,8 @@ const HeadlessBoundaryEventTask = async ({
 };
 
 export const init = () => {
+  console.log('[geofence] initialize');
+
   AppRegistry.registerHeadlessTask(
     'OnBoundaryEvent',
     () => HeadlessBoundaryEventTask
@@ -69,6 +71,8 @@ export const addGeofence = (boundary: Boundary) => {
 };
 
 export const on = (event: string, callback: (id: string) => void) => {
+  console.log('[geofence] added geofence event listener for event ' + event);
+
   if (typeof callback !== 'function') {
     throw TAG + ': callback function must be provided';
   }
@@ -79,7 +83,8 @@ export const on = (event: string, callback: (id: string) => void) => {
   return boundaryEventEmitter.addListener(event, callback);
 };
 
-export const off = (event: string) => {
+export const removeAllListeners = (event: string) => {
+  console.log('[geofence] remove all listeners');
   if (!Object.values(Events).find((e) => e === event)) {
     throw TAG + ': invalid event';
   }
@@ -87,6 +92,7 @@ export const off = (event: string) => {
   return boundaryEventEmitter.removeAllListeners(event);
 };
 export const removeAll = () => {
+  console.log('[geofence] remove all boundaries');
   return RNBackgroundGeofence.removeAll();
 };
 
@@ -102,7 +108,7 @@ const BackgroundGeofence = {
   init,
   addGeofence,
   on,
-  off,
+  removeAllListeners,
   removeAll,
   removeGeofence,
 };
