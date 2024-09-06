@@ -93,7 +93,7 @@ export const removeGeofence = (id: string) => {
     throw TAG + ': id must be a string';
   }
 
-  return RNBackgroundGeofence.remove(id);
+  return RNBackgroundGeofence.removeGeofence(id);
 };
 
 const BackgroundGeofence = {
