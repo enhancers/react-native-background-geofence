@@ -2,7 +2,7 @@
   "name": "react-native-background-geofence",
   "version": "0.1.0",
   "description": "background geofence",
-  "source": "./src/index.js",
+  "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "exports": {
@@ -49,10 +49,7 @@
     "ios",
     "android"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/enhancers/react-native-background-geofence.git"
-  },
+  "repository": "https://github.com/enhancers/react-native-background-geofence",
   "author": "enhancers <gianluca.lippolis@enhancers.it> (https://github.com/enhancers)",
   "license": "MIT",
   "bugs": {
@@ -85,9 +82,6 @@
   },
   "resolutions": {
     "@types/react": "^18.2.44"
-  },
-  "dependencies": {
-    "react-native-background-fetch": "~4.2.5"
   },
   "peerDependencies": {
     "react": "*",

@@ -12,6 +12,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		4C91A6E22C89FF2F0063DD7F /* route.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 4C91A6E12C89FF2F0063DD7F /* route.gpx */; };
 		7699B88040F8A987B510C191 /* libPods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		ACFD7CD7726F61AB7ABB1980 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3CE291AD6FBFA8AD2E77DD70 /* PrivacyInfo.xcprivacy */; };
@@ -41,6 +42,7 @@
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-BackgroundGeofenceExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BackgroundGeofenceExample.debug.xcconfig"; path = "Target Support Files/Pods-BackgroundGeofenceExample/Pods-BackgroundGeofenceExample.debug.xcconfig"; sourceTree = "<group>"; };
 		3CE291AD6FBFA8AD2E77DD70 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = BackgroundGeofenceExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		4C91A6E12C89FF2F0063DD7F /* route.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = route.gpx; path = ../../../../Downloads/route.gpx; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-BackgroundGeofenceExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BackgroundGeofenceExample.release.xcconfig"; path = "Target Support Files/Pods-BackgroundGeofenceExample/Pods-BackgroundGeofenceExample.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests/Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-BackgroundGeofenceExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BackgroundGeofenceExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +123,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				4C91A6E12C89FF2F0063DD7F /* route.gpx */,
 				13B07FAE1A68108700A75B9A /* BackgroundGeofenceExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* BackgroundGeofenceExampleTests */,
@@ -247,6 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				4C91A6E22C89FF2F0063DD7F /* route.gpx in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				ACFD7CD7726F61AB7ABB1980 /* PrivacyInfo.xcprivacy in Resources */,
 			);

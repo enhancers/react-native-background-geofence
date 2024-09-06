@@ -11,9 +11,9 @@ dependencies:
   react-native:
     specifier: 0.75.2
     version: 0.75.2(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.3.1)
-  react-native-background-fetch:
-    specifier: ~4.2.5
-    version: 4.2.5
+  react-native-boundary:
+    specifier: ^1.1.1
+    version: 1.1.1(react-native@0.75.2)
 
 devDependencies:
   '@babel/core':
@@ -5276,8 +5276,12 @@ packages:
   /react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
-  /react-native-background-fetch@4.2.5:
-    resolution: {integrity: sha512-llOU+UWPd1fjOFGNGB4v4YrYaA0sMLn5hMk0aNx0Ok9+wQ2nQillVwj7G/XZEpIiD2vTVkntTNNXWycF5Ju0kQ==}
+  /react-native-boundary@1.1.1(react-native@0.75.2):
+    resolution: {integrity: sha512-CkWlrk5o2IHEanZERZ6v4PscFPm8mDtEy2sUbMBHCo0671c3Nb6UU2I6dXWtQ7IpWOB4ZUlod/KHHrKGfhckCQ==}
+    peerDependencies:
+      react-native: '>0.49.0'
+    dependencies:
+      react-native: 0.75.2(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.3.1)
     dev: false
 
   /react-native-builder-bob@0.30.0:

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "AFD96F1F-8609-4815-9DED-ED6F4DA6B7EB"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "053F1D23-03E1-4333-BAB1-D0562E225702"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../ios/RNBackgroundGeofence/RNBackgroundGeofence.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "389"
+            endingLineNumber = "389"
+            landmarkName = "RCT_EXPORT_METHOD(failure)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4E485E9B-7218-4CC4-8F3D-6793101E772D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../ios/RNBackgroundGeofence/RNBackgroundGeofence.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "396"
+            endingLineNumber = "396"
+            landmarkName = "RCT_EXPORT_METHOD(failure)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F3721303-F3FD-426C-BBBE-9248A8D2471E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../ios/RNBackgroundGeofence.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "21"
+            endingLineNumber = "21"
+            landmarkName = "RCT_EXPORT_METHOD(reject)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "F3721303-F3FD-426C-BBBE-9248A8D2471E - f08ca9c412ee3a51"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[RNBackgroundGeofence add:addWithResolver:rejecter:]"
+                  moduleName = "BackgroundGeofenceExample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gianlucalippolis/Desktop/react-native-background-geofence/ios/RNBackgroundGeofence.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "108">
+               </Location>
+               <Location
+                  uuid = "F3721303-F3FD-426C-BBBE-9248A8D2471E - 8b7ff3a4116f8935"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[RNBackgroundGeofence addGeofence:addWithResolver:rejecter:]"
+                  moduleName = "BackgroundGeofenceExample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gianlucalippolis/Desktop/react-native-background-geofence/ios/RNBackgroundGeofence.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "108">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "25FFD6D2-811B-41B6-9D1E-9FD5A287CA9C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../ios/RNBackgroundGeofence.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "RCT_EXPORT_METHOD(reject)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "25FFD6D2-811B-41B6-9D1E-9FD5A287CA9C - 79c15f3fcf659014"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[RNBackgroundGeofence remove:removeWithResolver:rejecter:]"
+                  moduleName = "BackgroundGeofenceExample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gianlucalippolis/Desktop/react-native-background-geofence/ios/RNBackgroundGeofence.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "100">
+               </Location>
+               <Location
+                  uuid = "25FFD6D2-811B-41B6-9D1E-9FD5A287CA9C - 963c305ae31ae490"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[RNBackgroundGeofence removeGeofence:removeWithResolver:rejecter:]"
+                  moduleName = "BackgroundGeofenceExample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gianlucalippolis/Desktop/react-native-background-geofence/ios/RNBackgroundGeofence.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "100">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

@@ -1,22 +1,27 @@
 import { useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import BackgroundGeofence from 'react-native-background-geofence';
+import BackgroundGeofence, { Events } from 'react-native-background-geofence';
 
 export default function App() {
   useEffect(() => {
     BackgroundGeofence.addGeofence({
-      identifier: 'Home',
-      radius: 200,
-      latitude: 45.51921926,
-      longitude: -73.61678581,
-      notifyOnEntry: true,
-      notifyOnExit: true,
-      extras: {
-        route_id: 1234,
-      },
+      id: 'home',
+      lat: 34.017714,
+      lng: -118.499033,
+      radius: 50, // in meters
     })
-      .then((res) => console.log('asd', res))
-      .catch((e) => console.error(e));
+      .then(() => console.log('success!'))
+      .catch((e: any) => console.error('error :(', e));
+
+    // BackgroundGeofence.on(Events.ENTER, (id: string) => {
+    //   // Prints 'Get out of my Chipotle!!'
+    //   console.log(`Get out of my ${id}!!`);
+    // });
+
+    // BackgroundGeofence.on(Events.EXIT, (id: string) => {
+    //   // Prints 'Ya! You better get out of my Chipotle!!'
+    //   console.log(`Ya! You better get out of my ${id}!!`);
+    // });
   }, []);
 
   return (
