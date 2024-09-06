@@ -23,14 +23,16 @@ export default function App() {
           return;
         }
 
-        // BackgroundGeofence.addGeofence({
-        //   id: 'home',
-        //   lat: 34.017714,
-        //   lng: -118.499033,
-        //   radius: 50, // in meters
-        // })
-        //   .then(() => console.log('success!'))
-        //   .catch((e: any) => console.error('error :(', e));
+        console.log('Location permission granted');
+
+        BackgroundGeofence.addGeofence({
+          id: 'home',
+          lat: 34.017714,
+          lng: -118.499033,
+          radius: 50, // in meters
+        })
+          .then(() => console.log('success!'))
+          .catch((e: any) => console.error('error :(', e));
 
         // BackgroundGeofence.on(Events.ENTER, (id: string) => {
         //   console.log(`Get out of my ${id}!!`);

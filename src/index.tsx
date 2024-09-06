@@ -96,10 +96,12 @@ export const removeGeofence = (id: string) => {
   return RNBackgroundGeofence.remove(id);
 };
 
-export default {
+const BackgroundGeofence = {
   addGeofence,
   on,
   off,
   removeAll,
   removeGeofence,
 };
+
+export default BackgroundGeofence;
