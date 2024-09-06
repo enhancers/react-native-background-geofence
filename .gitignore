@@ -3,7 +3,9 @@ example/ios/build
 example/node_modules
 example/android/app/build
 example/android/build
+example/android/.gradle
 example/vendor
 example/.gradle
 android/build
+android/.gradle
 node_modules
