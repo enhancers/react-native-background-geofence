@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@react-native/gradle-plugin':
+    specifier: ^0.75.2
+    version: 0.75.2
   react:
     specifier: 18.3.1
     version: 18.3.1
