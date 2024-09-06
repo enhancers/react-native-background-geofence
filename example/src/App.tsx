@@ -1,7 +1,18 @@
 import { useEffect } from 'react';
-import { StyleSheet, View, Text, Platform } from 'react-native';
-import BackgroundGeofence, { Events } from 'react-native-background-geofence';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Platform,
+  TouchableOpacity,
+} from 'react-native';
+import BackgroundGeofence, {
+  Events,
+  removeGeofence,
+} from 'react-native-background-geofence';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+
+const TEST_GEOFENCE_ID = 'home';
 
 export default function App() {
   const requestLocationPermission = async () => {
@@ -16,38 +27,49 @@ export default function App() {
   };
 
   useEffect(() => {
-    requestLocationPermission()
-      .then((res: any) => {
-        if (res !== RESULTS.GRANTED) {
-          console.error('Location permissions not granted');
-          return;
-        }
-
-        console.log('Location permission granted');
-
-        BackgroundGeofence.addGeofence({
-          id: 'home',
-          lat: 34.017714,
-          lng: -118.499033,
-          radius: 50, // in meters
-        })
-          .then(() => console.log('success!'))
-          .catch((e: any) => console.error('error :(', e));
-
-        // BackgroundGeofence.on(Events.ENTER, (id: string) => {
-        //   console.log(`Get out of my ${id}!!`);
-        // });
-
-        // BackgroundGeofence.on(Events.EXIT, (id: string) => {
-        //   console.log(`Ya! You better get out of my ${id}!!`);
-        // });
-      })
-      .catch((err: any) => console.log('error', err));
+    const onEnterEvent = BackgroundGeofence.on(Events.ENTER, (id: string) => {
+      console.log(`Get out of my ${id}!!`);
+    });
+    const onExitEvent = BackgroundGeofence.on(Events.EXIT, (id: string) => {
+      console.log(`Ya! You better get out of my ${id}!!`);
+    });
+    return () => {
+      onEnterEvent.remove();
+      onExitEvent.remove();
+    };
   }, []);
+
+  const addGeofenceTest = () => {
+    requestLocationPermission().then((res: any) => {
+      if (res !== RESULTS.GRANTED) {
+        console.error('Location permissions not granted');
+        return;
+      }
+
+      console.log('Location permission granted');
+
+      BackgroundGeofence.addGeofence({
+        id: TEST_GEOFENCE_ID,
+        lat: 34.017714,
+        lng: -118.499033,
+        radius: 50, // in meters
+      })
+        .then((id) => console.log('added geofence with id', id))
+        .catch((e: any) => console.error('error :(', e));
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <Text>TEST GEOFENCE</Text>
+      <TouchableOpacity onPress={() => addGeofenceTest()}>
+        <Text>ADD GEOFENCE</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={{ marginTop: 80 }}
+        onPress={() => removeGeofence(TEST_GEOFENCE_ID)}
+      >
+        <Text>REMOVE ALL</Text>
+      </TouchableOpacity>
     </View>
   );
 }
