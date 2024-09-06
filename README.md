@@ -8,19 +8,17 @@ background geofence
 npm install react-native-background-geofence
 ```
 
+## IOS
+
+Add this keys to app info.plist file
+```
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Background Geofencing</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Background Geofencing</string>
+```
+
 ## Usage
 
+Call BackgroundGeofence.init() mehtod
 
-
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
-
-## License
-
-MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
