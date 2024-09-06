@@ -66,7 +66,7 @@ export const addGeofence = (boundary: Boundary) => {
   });
 };
 
-export const on = (event: string, callback: void) => {
+export const on = (event: string, callback: (id: string) => void) => {
   if (typeof callback !== 'function') {
     throw TAG + ': callback function must be provided';
   }

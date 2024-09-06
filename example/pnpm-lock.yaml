@@ -14,6 +14,9 @@ dependencies:
   react-native-boundary:
     specifier: ^1.1.1
     version: 1.1.1(react-native@0.75.2)
+  react-native-permissions:
+    specifier: ^4.1.5
+    version: 4.1.5(react-native@0.75.2)(react@18.3.1)
 
 devDependencies:
   '@babel/core':
@@ -5317,6 +5320,20 @@ packages:
       - typescript
       - utf-8-validate
     dev: true
+
+  /react-native-permissions@4.1.5(react-native@0.75.2)(react@18.3.1):
+    resolution: {integrity: sha512-r6VMRacASmtRHS+GZ+5HQCp9p9kiE+UU9magHOZCXZLTJitdTuVHWZRrb4v4oqZGU+zAp3mZhTQftuMMv+WLUg==}
+    peerDependencies:
+      react: '>=18.1.0'
+      react-native: '>=0.70.0'
+      react-native-windows: '>=0.70.0'
+    peerDependenciesMeta:
+      react-native-windows:
+        optional: true
+    dependencies:
+      react: 18.3.1
+      react-native: 0.75.2(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.3.1)
+    dev: false
 
   /react-native@0.75.2(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.3.1):
     resolution: {integrity: sha512-pP+Yswd/EurzAlKizytRrid9LJaPJzuNldc+o5t01md2VLHym8V7FWH2z9omFKtFTer8ERg0fAhG1fpd0Qq6bQ==}
