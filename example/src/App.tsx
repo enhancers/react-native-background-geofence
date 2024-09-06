@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import BackgroundGeofence, {
   Events,
+  removeAll,
+  removeAllListeners,
   removeGeofence,
 } from 'react-native-background-geofence';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
@@ -15,6 +17,9 @@ import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 const TEST_GEOFENCE_ID = 'home';
 
 export default function App() {
+  const [lastEventReceived, setLastEventReceived] =
+    useState('no event received');
+
   const requestLocationPermission = async () => {
     let permission;
     if (Platform.OS === 'android') {
@@ -31,9 +36,11 @@ export default function App() {
 
     const onEnterEvent = BackgroundGeofence.on(Events.ENTER, (id: string) => {
       console.log(`Get out of my ${id}!!`);
+      setLastEventReceived(Events.ENTER + ' - ' + id);
     });
     const onExitEvent = BackgroundGeofence.on(Events.EXIT, (id: string) => {
       console.log(`Ya! You better get out of my ${id}!!`);
+      setLastEventReceived(Events.EXIT + ' - ' + id);
     });
     return () => {
       onEnterEvent.remove();
@@ -63,14 +70,31 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => addGeofenceTest()}>
-        <Text>ADD GEOFENCE</Text>
+      <Text style={styles.statusTitleText}>LAST EVENT RECEIVED:</Text>
+      <Text style={styles.statusText}>{lastEventReceived}</Text>
+      <TouchableOpacity style={styles.button} onPress={() => addGeofenceTest()}>
+        <Text style={styles.buttonText}>ADD GEOFENCE</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={{ marginTop: 80 }}
+        style={styles.button}
         onPress={() => removeGeofence(TEST_GEOFENCE_ID)}
       >
-        <Text>REMOVE ALL</Text>
+        <Text style={styles.buttonText}>REMOVE GEOFENCE</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => removeAll()}>
+        <Text style={styles.buttonText}>REMOVE ALL BOUNDARIES</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => removeAllListeners(Events.ENTER)}
+      >
+        <Text style={styles.buttonText}>REMOVE ALL 'onEnter' LISTENERS</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => removeAllListeners(Events.EXIT)}
+      >
+        <Text style={styles.buttonText}>REMOVE ALL 'onExit' LISTENERS</Text>
       </TouchableOpacity>
     </View>
   );
@@ -81,6 +105,26 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  statusTitleText: {
+    fontSize: 18,
+  },
+  statusText: {
+    fontSize: 18,
+    marginTop: 12,
+    marginBottom: 12,
+    fontWeight: 'bold',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  button: {
+    margin: 12,
+    backgroundColor: '#000',
+    color: '#ffff',
+    padding: 12,
+    borderRadius: 8,
   },
   box: {
     width: 60,
