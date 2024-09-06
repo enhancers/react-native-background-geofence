@@ -27,6 +27,8 @@ export default function App() {
   };
 
   useEffect(() => {
+    BackgroundGeofence.init();
+
     const onEnterEvent = BackgroundGeofence.on(Events.ENTER, (id: string) => {
       console.log(`Get out of my ${id}!!`);
     });

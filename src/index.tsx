@@ -43,10 +43,12 @@ const HeadlessBoundaryEventTask = async ({
   boundaryEventEmitter.emit(event, ids);
 };
 
-AppRegistry.registerHeadlessTask(
-  'OnBoundaryEvent',
-  () => HeadlessBoundaryEventTask
-);
+export const init = () => {
+  AppRegistry.registerHeadlessTask(
+    'OnBoundaryEvent',
+    () => HeadlessBoundaryEventTask
+  );
+};
 
 export const addGeofence = (boundary: Boundary) => {
   if (
@@ -97,6 +99,7 @@ export const removeGeofence = (id: string) => {
 };
 
 const BackgroundGeofence = {
+  init,
   addGeofence,
   on,
   off,
