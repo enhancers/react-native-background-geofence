@@ -33,7 +33,9 @@
 			<true />
 		</dict>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string></string>
+		<string>Background Geofencing</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Background Geofencing</string>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIRequiredDeviceCapabilities</key>
@@ -50,5 +52,11 @@
 		<false />
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Background geofence</string>
+		<key>NSUserNotificationUsageDescription</key>
+		<string>Notification on user enter/exit from geofence area.</string>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>location</string>
+		</array>
 	</dict>
 </plist>

@@ -42,6 +42,7 @@
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-BackgroundGeofenceExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BackgroundGeofenceExample.debug.xcconfig"; path = "Target Support Files/Pods-BackgroundGeofenceExample/Pods-BackgroundGeofenceExample.debug.xcconfig"; sourceTree = "<group>"; };
 		3CE291AD6FBFA8AD2E77DD70 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = BackgroundGeofenceExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		4C1EA1F42C8F007900477BCF /* BackgroundGeofenceExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BackgroundGeofenceExample.entitlements; path = BackgroundGeofenceExample/BackgroundGeofenceExample.entitlements; sourceTree = "<group>"; };
 		4C91A6E12C89FF2F0063DD7F /* route.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = route.gpx; path = ../../../../Downloads/route.gpx; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-BackgroundGeofenceExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BackgroundGeofenceExample.release.xcconfig"; path = "Target Support Files/Pods-BackgroundGeofenceExample/Pods-BackgroundGeofenceExample.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests/Pods-BackgroundGeofenceExample-BackgroundGeofenceExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -91,6 +92,7 @@
 		13B07FAE1A68108700A75B9A /* BackgroundGeofenceExample */ = {
 			isa = PBXGroup;
 			children = (
+				4C1EA1F42C8F007900477BCF /* BackgroundGeofenceExample.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -475,6 +477,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BackgroundGeofenceExample/BackgroundGeofenceExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LT27HAQDB9;
 				ENABLE_BITCODE = NO;
@@ -503,6 +506,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BackgroundGeofenceExample/BackgroundGeofenceExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LT27HAQDB9;
 				INFOPLIST_FILE = BackgroundGeofenceExample/Info.plist;

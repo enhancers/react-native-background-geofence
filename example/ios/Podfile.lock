@@ -1788,7 +1788,7 @@ SPEC CHECKSUMS:
   React-utils: 81a715d9c0a2a49047e77a86f3a2247408540deb
   ReactCodegen: 60973d382704c793c605b9be0fc7f31cb279442f
   ReactCommon: 6ef348087d250257c44c0204461c03f036650e9b
-  RNbackgroundGeofence: 9366f82f18b3f4db92272c0c0b469c9d6c6e8133
+  RNbackgroundGeofence: 422ba29f462079203ddec63a2583877debda2eb5
   RNPermissions: ecf7c4c164c3d789b17c1fdffa654ef47160e5f6
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: a1d7895431387402a674fd0d1c04ec85e87909b8
