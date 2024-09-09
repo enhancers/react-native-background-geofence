@@ -19,8 +19,8 @@ import static com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule.TAG;
 
 public class BoundaryEventJobIntentService extends JobIntentService {
 
-    public static final String ON_ENTER = "onEnter";
-    public static final String ON_EXIT = "onExit";
+    public static final String ON_ENTER = "onEnterGeofence";
+    public static final String ON_EXIT = "onExitGeofence";
 
     public BoundaryEventJobIntentService() {
         super();
