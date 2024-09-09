@@ -3,8 +3,11 @@ import {
   NativeModules,
   AppRegistry,
   Platform,
+  DeviceEventEmitter,
 } from 'react-native';
-import type { Boundary } from './types';
+import type { Config, HeadlessTaskEvent } from './types';
+
+var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
 
 const TAG = 'RNBackgroundGeofence';
 
@@ -30,7 +33,9 @@ export const RNBackgroundGeofence = NativeModules.RNBackgroundGeofence
       }
     );
 
-const boundaryEventEmitter = new NativeEventEmitter(RNBackgroundGeofence);
+const BackgroundGeofenceEventEmitter = new NativeEventEmitter(
+  RNBackgroundGeofence
+);
 
 const HeadlessBoundaryEventTask = async ({
   event,
@@ -40,7 +45,7 @@ const HeadlessBoundaryEventTask = async ({
   ids: any;
 }) => {
   console.log(event, ids);
-  boundaryEventEmitter.emit(event, ids);
+  BackgroundGeofenceEventEmitter.emit(event, ids);
 };
 
 export const init = () => {
@@ -52,19 +57,16 @@ export const init = () => {
   );
 };
 
-export const addGeofence = (boundary: Boundary) => {
-  if (
-    !boundary ||
-    (boundary.constructor !== Array && typeof boundary !== 'object')
-  ) {
+export const addGeofence = (config: Config) => {
+  if (!config || (config.constructor !== Array && typeof config !== 'object')) {
     throw TAG + ': a boundary must be an array or non-null object';
   }
   return new Promise((resolve, reject) => {
-    if (typeof boundary === 'object' && !boundary.id) {
+    if (typeof config === 'object' && !config.id) {
       reject(TAG + ': an id is required');
     }
 
-    RNBackgroundGeofence.addGeofence(boundary)
+    RNBackgroundGeofence.addGeofence(config)
       .then((id: string) => resolve(id))
       .catch((e: any) => reject(e));
   });
@@ -80,7 +82,7 @@ export const on = (event: string, callback: (id: string) => void) => {
     throw TAG + ': invalid event';
   }
 
-  return boundaryEventEmitter.addListener(event, callback);
+  return DeviceEventEmitter.addListener(event, callback);
 };
 
 export const removeAllListeners = (event: string) => {
@@ -89,7 +91,7 @@ export const removeAllListeners = (event: string) => {
     throw TAG + ': invalid event';
   }
 
-  return boundaryEventEmitter.removeAllListeners(event);
+  return BackgroundGeofenceEventEmitter.removeAllListeners(event);
 };
 export const removeAll = () => {
   console.log('[geofence] remove all boundaries');
@@ -104,6 +106,40 @@ export const removeGeofence = (id: string) => {
   return RNBackgroundGeofence.removeGeofence(id);
 };
 
+const emptyFn = () => {};
+
+const headlessTask = (
+  task: (event: HeadlessTaskEvent) => Promise<void>,
+  successFn: () => void,
+  errorFn: () => void
+) => {
+  successFn = successFn || emptyFn;
+  errorFn = errorFn || emptyFn;
+  AppRegistry.registerHeadlessTask(TASK_KEY, () => task);
+  RNBackgroundGeofence.registerHeadlessTask(successFn, errorFn);
+};
+
+const startTask = (callbackFn: (n: number) => void) => {
+  if (typeof callbackFn !== 'function') {
+    throw 'RNBackgroundGeolocation: startTask requires callback function';
+  }
+
+  if (typeof RNBackgroundGeofence.startTask === 'function') {
+    RNBackgroundGeofence.startTask(callbackFn);
+  } else {
+    // android does not need background tasks so we invoke callbackFn directly
+    callbackFn(-1);
+  }
+};
+
+const endTask = (taskKey: number) => {
+  if (typeof RNBackgroundGeofence.endTask === 'function') {
+    RNBackgroundGeofence.endTask(taskKey);
+  } else {
+    // noop
+  }
+};
+
 const BackgroundGeofence = {
   init,
   addGeofence,
@@ -111,6 +147,9 @@ const BackgroundGeofence = {
   removeAllListeners,
   removeAll,
   removeGeofence,
+  startTask,
+  endTask,
+  headlessTask,
 };
 
 export default BackgroundGeofence;
