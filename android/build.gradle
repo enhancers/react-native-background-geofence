@@ -49,7 +49,7 @@ def supportsNamespace() {
 
 android {
   if (supportsNamespace()) {
-    namespace "com.backgroundgeofence"
+    namespace "com.enhancers.backgroundgeofence"
 
     sourceSets {
       main {

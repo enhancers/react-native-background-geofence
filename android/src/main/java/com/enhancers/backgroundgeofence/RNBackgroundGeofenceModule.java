@@ -4,8 +4,10 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull; // Updated import for AndroidX
+import androidx.core.app.ActivityCompat; // Updated import for AndroidX
+import androidx.appcompat.app.AppCompatActivity; // Updated import for AndroidX
+
 import android.util.Log;
 
 import com.enhancers.backgroundgeofence.receivers.BoundaryEventBroadcastReceiver;
@@ -135,19 +137,16 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
             return mBoundaryPendingIntent;
         }
         Intent intent = new Intent(getReactApplicationContext(), BoundaryEventBroadcastReceiver.class);
-        mBoundaryPendingIntent = PendingIntent.getBroadcast(getReactApplicationContext(), 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
+        mBoundaryPendingIntent = PendingIntent.getBroadcast(getReactApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return mBoundaryPendingIntent;
     }
 
     private void addGeofence(final Promise promise, final GeofencingRequest geofencingRequest, final WritableArray geofenceRequestIds) {
         int permission = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
-
         if (permission != PackageManager.PERMISSION_GRANTED) {
             permission = requestPermissions();
         }
-
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             promise.reject("PERM", "Access fine location is not permitted");
@@ -169,19 +168,17 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
                         }
                     });
         }
-
     }
 
     private void addGeofence(final Promise promise, final GeofencingRequest geofencingRequest, final String requestId) {
         int permission = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             permission = requestPermissions();
         }
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
-            promise.reject("PERM", "Access fine location is not permitted. Hello");
+            promise.reject("PERM", "Access fine location is not permitted.");
         } else {
             Log.i(TAG, "Attempting to add geofence.");
 

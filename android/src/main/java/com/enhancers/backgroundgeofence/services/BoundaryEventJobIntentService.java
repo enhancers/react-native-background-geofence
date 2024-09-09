@@ -3,9 +3,9 @@ package com.enhancers.backgroundgeofence.services;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.JobIntentService;
+import androidx.core.app.JobIntentService;
 import android.util.Log;
+import androidx.annotation.NonNull; // Updated import for AndroidX
 
 import com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule;
 import com.enhancers.backgroundgeofence.errors.GeofenceErrorMessages;
@@ -26,7 +26,6 @@ public class BoundaryEventJobIntentService extends JobIntentService {
         super();
     }
 
-    @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.i(TAG, "Handling geofencing event");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
