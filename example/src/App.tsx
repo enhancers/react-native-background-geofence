@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Platform,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, Platform, TouchableOpacity } from 'react-native';
 import BackgroundGeofence, {
   Events,
   removeAll,
@@ -13,6 +7,8 @@ import BackgroundGeofence, {
   removeGeofence,
 } from 'react-native-background-geofence';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import styles from './App.styles';
+import Task from './Task';
 
 const TEST_GEOFENCE_ID = 'home';
 
@@ -43,6 +39,7 @@ export default function App() {
       setLastEventReceived(Events.EXIT + ' - ' + id);
     });
     return () => {
+      console.log('remove listeners');
       onEnterEvent.remove();
       onExitEvent.remove();
     };
@@ -62,9 +59,15 @@ export default function App() {
         lat: 34.017714,
         lng: -118.499033,
         radius: 50, // in meters
+        enterGeofenceNotificationTitle: 'enter-titolo',
+        enterGeofenceNotificationText: 'enter-testo',
+        exitGeofenceNotificationTitle: 'exit-titolo',
+        exitGeofenceNotificationText: 'exit-testo',
       })
-        .then((id) => console.log('added geofence with id', id))
-        .catch((e: any) => console.error('error :(', e));
+        .then((id) => console.log('[geofence] Added geofence with id', id))
+        .catch((e: any) =>
+          console.error('[geofence] Error in BackgroundGeofence.addGeofence', e)
+        );
     });
   };
 
@@ -96,39 +99,7 @@ export default function App() {
       >
         <Text style={styles.buttonText}>REMOVE ALL 'onExit' LISTENERS</Text>
       </TouchableOpacity>
+      <Task />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statusTitleText: {
-    fontSize: 18,
-  },
-  statusText: {
-    fontSize: 18,
-    marginTop: 12,
-    marginBottom: 12,
-    fontWeight: 'bold',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  button: {
-    margin: 12,
-    backgroundColor: '#000',
-    color: '#ffff',
-    padding: 12,
-    borderRadius: 8,
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
