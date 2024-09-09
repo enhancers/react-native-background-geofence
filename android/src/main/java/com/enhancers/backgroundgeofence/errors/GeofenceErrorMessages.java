@@ -1,4 +1,4 @@
-package com.eddieowens.errors;
+package com.enhancers.backgroundgeofence.errors;
 
 import com.google.android.gms.location.GeofenceStatusCodes;
 

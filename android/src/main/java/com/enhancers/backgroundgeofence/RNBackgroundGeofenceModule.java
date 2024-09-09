@@ -1,4 +1,4 @@
-package com.eddieowens;
+package com.enhancers.backgroundgeofence;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.eddieowens.receivers.BoundaryEventBroadcastReceiver;
+import com.enhancers.backgroundgeofence.receivers.BoundaryEventBroadcastReceiver;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RNBoundaryModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
-    public static final String TAG = "RNBoundary";
+    public static final String TAG = "RNBackgroundGeofence";
     public static final String ON_ENTER = "onEnter";
     public static final String ON_EXIT = "onExit";
     public static final String GEOFENCE_DATA_TO_EMIT = "com.eddieowens.GEOFENCE_DATA_TO_EMIT";
@@ -39,7 +39,7 @@ public class RNBoundaryModule extends ReactContextBaseJavaModule implements Life
     private GeofencingClient mGeofencingClient;
     private PendingIntent mBoundaryPendingIntent;
 
-    RNBoundaryModule(ReactApplicationContext reactContext) {
+    RNBackgroundGeofenceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.mGeofencingClient = LocationServices.getGeofencingClient(getReactApplicationContext());
         getReactApplicationContext().addLifecycleEventListener(this);

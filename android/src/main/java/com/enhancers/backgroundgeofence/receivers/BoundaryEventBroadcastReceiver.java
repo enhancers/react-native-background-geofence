@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.eddieowens.services.BoundaryEventJobIntentService;
 
-import static com.eddieowens.RNBoundaryModule.TAG;
+import static com.enhancers.RNBackgroundGeofenceModule.TAG;
 
 public class BoundaryEventBroadcastReceiver extends BroadcastReceiver {
 

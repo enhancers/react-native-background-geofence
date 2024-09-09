@@ -1,5 +1,5 @@
 
-package com.eddieowens;
+package com.enhancers.backgroundgeofence;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RNBoundaryPackage implements ReactPackage {
+public class RNBackgroundGeofencePackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules = new ArrayList<>();
-        nativeModules.add(new RNBoundaryModule(reactContext));
+        nativeModules.add(new RNBackgroundGeofenceModule(reactContext));
         return nativeModules;
     }
 

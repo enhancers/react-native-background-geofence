@@ -7,15 +7,15 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
-import com.eddieowens.RNBoundaryModule;
-import com.eddieowens.errors.GeofenceErrorMessages;
+import com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule;
+import com.enhancers.backgroundgeofence.errors.GeofenceErrorMessages;
 import com.facebook.react.HeadlessJsTaskService;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.ArrayList;
 
-import static com.eddieowens.RNBoundaryModule.TAG;
+import com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule.TAG;
 
 public class BoundaryEventJobIntentService extends JobIntentService {
 
@@ -57,7 +57,7 @@ public class BoundaryEventJobIntentService extends JobIntentService {
     }
 
     private void sendEvent(Context context, String event, ArrayList<String> params) {
-        final Intent intent = new Intent(RNBoundaryModule.GEOFENCE_DATA_TO_EMIT);
+        final Intent intent = new Intent(RNBackgroundGeofenceModule.GEOFENCE_DATA_TO_EMIT);
         intent.putExtra("event", event);
         intent.putExtra("params", params);
 
