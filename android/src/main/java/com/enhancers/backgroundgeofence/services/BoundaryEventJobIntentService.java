@@ -1,4 +1,4 @@
-package com.eddieowens.services;
+package com.enhancers.backgroundgeofence.services;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +15,7 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.ArrayList;
 
-import com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule.TAG;
+import static com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule.TAG;
 
 public class BoundaryEventJobIntentService extends JobIntentService {
 

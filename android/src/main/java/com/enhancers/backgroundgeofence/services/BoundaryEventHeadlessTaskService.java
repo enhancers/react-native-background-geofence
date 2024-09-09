@@ -1,4 +1,4 @@
-package com.eddieowens.services;
+package com.enhancers.backgroundgeofence.services;
 
 import android.content.Intent;
 import android.os.Bundle;

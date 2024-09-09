@@ -1,4 +1,4 @@
-package com.eddieowens.receivers;
+package com.enhancers.backgroundgeofence.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
-import com.eddieowens.services.BoundaryEventJobIntentService;
+import com.enhancers.backgroundgeofence.services.BoundaryEventJobIntentService;
 
-import static com.enhancers.RNBackgroundGeofenceModule.TAG;
+import static com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule.TAG;
 
 public class BoundaryEventBroadcastReceiver extends BroadcastReceiver {
 
