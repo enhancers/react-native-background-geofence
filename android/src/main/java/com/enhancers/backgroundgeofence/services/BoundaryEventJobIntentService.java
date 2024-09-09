@@ -26,6 +26,7 @@ public class BoundaryEventJobIntentService extends JobIntentService {
         super();
     }
 
+    @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.i(TAG, "Handling geofencing event");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
