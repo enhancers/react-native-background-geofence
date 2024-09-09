@@ -1,5 +1,7 @@
 
 #import "RNBackgroundGeofence.h"
+#import "RNBGBackgroundTaskManager.h"
+#import <UserNotifications/UserNotifications.h>
 
 @implementation RNBackgroundGeofence
 
@@ -16,17 +18,40 @@ RCT_EXPORT_MODULE()
     return self;
 }
 
-RCT_EXPORT_METHOD(addGeofence:(NSDictionary*)boundary addWithResolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(startTask:(RCTResponseSenderBlock)callback)
 {
+    NSUInteger taskKey = [[RNBGBackgroundTaskManager sharedTasks] beginTask];
+    callback(@[[NSNumber numberWithInteger:taskKey]]);
+}
+
+RCT_EXPORT_METHOD(endTask:(NSNumber* _Nonnull)taskKey)
+{
+    [[RNBGBackgroundTaskManager sharedTasks] endTaskWithKey:[taskKey integerValue]];
+}
+
+RCT_EXPORT_METHOD(addGeofence:(NSDictionary*)config 
+    addWithResolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+
+    if(config[@"enterGeofenceNotificationTitle"] != nil && config[@"enterGeofenceNotificationText"]) {
+        self.enterGeofenceNotificationTitle = config[@"enterGeofenceNotificationTitle"] ;
+        self.enterGeofenceNotificationText = config[@"enterGeofenceNotificationText"];
+    }
+
+    if(config[@"exitGeofenceNotificationTitle"] != nil && config[@"exitGeofenceNotificationText"]) {
+        self.exitGeofenceNotificationTitle = config[@"exitGeofenceNotificationTitle"];
+        self.exitGeofenceNotificationText = config[@"exitGeofenceNotificationText"];
+    }
+    
     if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusAuthorizedAlways) {
         [self.locationManager requestAlwaysAuthorization];
     }
 
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
-        NSString *id = boundary[@"id"];
-        CLLocationCoordinate2D center = CLLocationCoordinate2DMake([boundary[@"lat"] doubleValue], [boundary[@"lng"] doubleValue]);
+        NSString *id = config[@"id"];
+        CLLocationCoordinate2D center = CLLocationCoordinate2DMake([config[@"lat"] doubleValue], [config[@"lng"] doubleValue]);
         CLRegion *boundaryRegion = [[CLCircularRegion alloc]initWithCenter:center
-                                                                    radius:[boundary[@"radius"] doubleValue]
+                                                                    radius:[config[@"radius"] doubleValue]
                                                                 identifier:id];
 
         [self.locationManager startMonitoringForRegion:boundaryRegion];
@@ -77,19 +102,48 @@ RCT_EXPORT_METHOD(removeAll:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
 
 - (NSArray<NSString *> *)supportedEvents
 {
-    return @[@"onEnter", @"onExit"];
+    return @[@"onEnterGeofence", @"onExitGeofence"];
+}
+
+- (void)sendLocalNotification:(NSString *)title 
+    message:(NSString *)message 
+    region:(CLRegion *)region {
+
+    UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+
+    content.title = [NSString localizedUserNotificationStringForKey:title arguments:nil];
+    content.body = [NSString localizedUserNotificationStringForKey:message
+                arguments:nil];
+    content.sound = [UNNotificationSound defaultSound];
+       
+    UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger
+                triggerWithTimeInterval:5 repeats:NO];
+    UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:@"FiveSecond"
+                content:content trigger:trigger];
+
+    UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+    [center addNotificationRequest:request withCompletionHandler:nil];
+
 }
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
 {
     NSLog(@"didEnter : %@", region);
-    [self sendEventWithName:@"onEnter" body:region.identifier];
+    [self sendEventWithName:@"onEnterGeofence" body:region.identifier];
+
+    if(self.enterGeofenceNotificationTitle != nil && self.enterGeofenceNotificationText) {
+        [self sendLocalNotification:self.enterGeofenceNotificationTitle message:self.enterGeofenceNotificationText region:region];
+    } 
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
 {
     NSLog(@"didExit : %@", region);
-    [self sendEventWithName:@"onExit" body:region.identifier];
+    [self sendEventWithName:@"onExitGeofence" body:region.identifier];
+
+    if(self.exitGeofenceNotificationTitle != nil && self.exitGeofenceNotificationText) {
+        [self sendLocalNotification:self.exitGeofenceNotificationTitle message:self.exitGeofenceNotificationText region:region];
+    }
 }
 
 + (BOOL)requiresMainQueueSetup

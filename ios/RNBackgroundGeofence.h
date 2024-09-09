@@ -12,4 +12,8 @@
 - (bool)removeBoundary:(NSString *)boundaryId;
 - (void)removeAllBoundaries;
 @property(strong, nonatomic) CLLocationManager *locationManager;
+@property(nonatomic, strong) NSString *enterGeofenceNotificationTitle;
+@property(nonatomic, strong) NSString *enterGeofenceNotificationText;
+@property(nonatomic, strong) NSString *exitGeofenceNotificationTitle;
+@property(nonatomic, strong) NSString *exitGeofenceNotificationText;
 @end
