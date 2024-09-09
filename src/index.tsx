@@ -1,10 +1,11 @@
+// *****
 import {
   NativeEventEmitter,
   NativeModules,
   AppRegistry,
   Platform,
-  DeviceEventEmitter,
 } from 'react-native';
+
 import type { Config, HeadlessTaskEvent } from './types';
 
 var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
@@ -12,8 +13,8 @@ var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
 const TAG = 'RNBackgroundGeofence';
 
 export const Events = {
-  EXIT: 'onExit',
-  ENTER: 'onEnter',
+  EXIT: 'onExitGeofence',
+  ENTER: 'onEnterGeofence',
 };
 
 const LINKING_ERROR =
@@ -33,7 +34,7 @@ export const RNBackgroundGeofence = NativeModules.RNBackgroundGeofence
       }
     );
 
-const BackgroundGeofenceEventEmitter = new NativeEventEmitter(
+export const BackgroundGeofenceEventEmitter = new NativeEventEmitter(
   RNBackgroundGeofence
 );
 
@@ -82,7 +83,7 @@ export const on = (event: string, callback: (id: string) => void) => {
     throw TAG + ': invalid event';
   }
 
-  return DeviceEventEmitter.addListener(event, callback);
+  return BackgroundGeofenceEventEmitter.addListener(event, callback);
 };
 
 export const removeAllListeners = (event: string) => {
@@ -140,6 +141,10 @@ const endTask = (taskKey: number) => {
   }
 };
 
+const triggetTestEvent = (event: string) => {
+  RNBackgroundGeofence.triggetTestEvent(event);
+};
+
 const BackgroundGeofence = {
   init,
   addGeofence,
@@ -150,6 +155,7 @@ const BackgroundGeofence = {
   startTask,
   endTask,
   headlessTask,
+  triggetTestEvent,
 };
 
 export default BackgroundGeofence;
