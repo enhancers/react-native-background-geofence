@@ -32,9 +32,9 @@ import java.util.List;
 public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     public static final String TAG = "RNBackgroundGeofence";
-    public static final String ON_ENTER = "onEnter";
-    public static final String ON_EXIT = "onExit";
-    public static final String GEOFENCE_DATA_TO_EMIT = "com.eddieowens.GEOFENCE_DATA_TO_EMIT";
+    public static final String ON_ENTER = "onEnterGeofence";
+    public static final String ON_EXIT = "onExitGeofence";
+    public static final String GEOFENCE_DATA_TO_EMIT = "com.enhancers.backgroundgeofence.GEOFENCE_DATA_TO_EMIT";
 
     private GeofencingClient mGeofencingClient;
     private PendingIntent mBoundaryPendingIntent;
