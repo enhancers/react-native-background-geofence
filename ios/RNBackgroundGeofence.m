@@ -100,9 +100,8 @@ RCT_EXPORT_METHOD(removeAll:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
     return false;
 }
 
-- (NSArray<NSString *> *)supportedEvents
-{
-    return @[@"onEnterGeofence", @"onExitGeofence"];
+- (NSArray<NSString *> *)supportedEvents {
+  return @[@"onEnterGeofence", @"onExitGeofence"];
 }
 
 - (void)sendLocalNotification:(NSString *)title 
@@ -144,6 +143,18 @@ RCT_EXPORT_METHOD(removeAll:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
     if(self.exitGeofenceNotificationTitle != nil && self.exitGeofenceNotificationText) {
         [self sendLocalNotification:self.exitGeofenceNotificationTitle message:self.exitGeofenceNotificationText region:region];
     }
+}
+
+RCT_EXPORT_METHOD(triggetTestEvent:(NSString *)event)
+{
+  [self sendEventWithName:event body:@{@"message": @"test"}];
+}
+
+- (void) startObserving {
+    NSLog(@"startObserving");
+}
+- (void) stopObserving {
+    NSLog(@"startObserving");
 }
 
 + (BOOL)requiresMainQueueSetup

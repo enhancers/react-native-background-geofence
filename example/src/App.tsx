@@ -99,6 +99,18 @@ export default function App() {
       >
         <Text style={styles.buttonText}>REMOVE ALL 'onExit' LISTENERS</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => BackgroundGeofence.triggetTestEvent(Events.ENTER)}
+      >
+        <Text style={styles.buttonText}>Trigger Test Event "ENTER"</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => BackgroundGeofence.triggetTestEvent(Events.EXIT)}
+      >
+        <Text style={styles.buttonText}>Trigger Test Event "EXIT"</Text>
+      </TouchableOpacity>
       <Task />
     </View>
   );
