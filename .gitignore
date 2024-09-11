@@ -9,3 +9,4 @@ example/.gradle
 android/build
 android/.gradle
 node_modules
+lib/
