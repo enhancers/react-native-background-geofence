@@ -6,7 +6,7 @@ import {
   Platform,
 } from 'react-native';
 
-import type { Config, HeadlessTaskEvent } from './types';
+import type { GeofenceConfig, HeadlessTaskEvent } from './types';
 
 var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
 
@@ -60,7 +60,7 @@ export const Events = {
 };
 
 const LINKING_ERROR =
-  `The package 'react-native-my-react-native-library' doesn't seem to be linked. Make sure: \n\n` +
+  `The package 'react-native-background-geofence' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
@@ -99,8 +99,7 @@ export const init = () => {
     () => HeadlessBoundaryEventTask
   );
 };
-
-export const addGeofence = (config: Config) => {
+export const addGeofence = (config: GeofenceConfig) => {
   if (!config || (config.constructor !== Array && typeof config !== 'object')) {
     throw TAG + ': a boundary must be an array or non-null object';
   }
