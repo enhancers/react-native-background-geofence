@@ -1,8 +1,8 @@
 // *****
 import {
+  AppRegistry,
   NativeEventEmitter,
   NativeModules,
-  AppRegistry,
   Platform,
 } from 'react-native';
 
@@ -11,6 +11,48 @@ import type { Config, HeadlessTaskEvent } from './types';
 var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
 
 const TAG = 'RNBackgroundGeofence';
+
+export const CONSTANTS = {
+  events: [
+    'location',
+    'stationary',
+    'activity',
+    'start',
+    'stop',
+    'error',
+    'authorization',
+    'foreground',
+    'background',
+    'abort_requested',
+    'http_authorization',
+  ],
+
+  DISTANCE_FILTER_PROVIDER: 0,
+  ACTIVITY_PROVIDER: 1,
+  RAW_PROVIDER: 2,
+
+  BACKGROUND_MODE: 0,
+  FOREGROUND_MODE: 1,
+
+  NOT_AUTHORIZED: 0,
+  AUTHORIZED: 1,
+  AUTHORIZED_FOREGROUND: 2,
+
+  HIGH_ACCURACY: 0,
+  MEDIUM_ACCURACY: 100,
+  LOW_ACCURACY: 1000,
+  PASSIVE_ACCURACY: 10000,
+
+  LOG_ERROR: 'ERROR',
+  LOG_WARN: 'WARN',
+  LOG_INFO: 'INFO',
+  LOG_DEBUG: 'DEBUG',
+  LOG_TRACE: 'TRACE',
+
+  PERMISSION_DENIED: 1,
+  LOCATION_UNAVAILABLE: 2,
+  TIMEOUT: 3,
+};
 
 export const Events = {
   EXIT: 'onExitGeofence',
@@ -146,6 +188,7 @@ const triggetTestEvent = (event: string) => {
 };
 
 const BackgroundGeofence = {
+  CONSTANTS,
   init,
   addGeofence,
   on,
