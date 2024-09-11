@@ -13,6 +13,13 @@ RCT_EXPORT_MODULE()
     if (self) {
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
+
+        // Request Always Authorization
+        [self.locationManager requestAlwaysAuthorization];
+
+        self.locationManager.allowsBackgroundLocationUpdates = YES;
+        self.locationManager.pausesLocationUpdatesAutomatically = NO;
+
     }
 
     return self;
