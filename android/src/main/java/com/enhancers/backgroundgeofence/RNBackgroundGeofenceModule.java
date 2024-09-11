@@ -236,7 +236,7 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
 
     @Override
     public String getName() {
-        return "RNBoundary";
+        return "RNBackgroundGeofence";
     }
 
     @Override
