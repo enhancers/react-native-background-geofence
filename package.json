@@ -17,6 +17,7 @@
       }
     }
   },
+  "private": true,
   "files": [
     "src",
     "lib",
@@ -91,7 +92,6 @@
   "workspaces": [
     "example"
   ],
-  "packageManager": "yarn@3.6.1",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [

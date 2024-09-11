@@ -8,8 +8,9 @@ example/vendor
 example/.gradle
 android/build
 android/.gradle
-android/.idea
+**/.idea
 node_modules
 local.properties
+.yarn/
 lib/
 **/.idea/

@@ -1,12 +1,12 @@
 package com.enhancers.backgroundgeofence;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull; // Updated import for AndroidX
 import androidx.core.app.ActivityCompat; // Updated import for AndroidX
-import androidx.appcompat.app.AppCompatActivity; // Updated import for AndroidX
 
 import android.util.Log;
 
@@ -67,12 +67,12 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
     }
 
     @ReactMethod
-    public void remove(final String boundaryRequestId, Promise promise) {
+    public void removeGeofence(final String boundaryRequestId, Promise promise) {
         removeGeofence(promise, Collections.singletonList(boundaryRequestId));
     }
 
     @ReactMethod
-    public void remove(final ReadableArray readableArray, Promise promise) {
+    public void removeGeofence(final ReadableArray readableArray, Promise promise) {
 
         final List<String> boundaryRequestIds = new ArrayList<>();
         for (int i = 0; i < readableArray.size(); ++i) {
@@ -83,13 +83,13 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
     }
 
     @ReactMethod
-    public void add(final ReadableMap readableMap, final Promise promise) {
+    public void addGeofence(final ReadableMap readableMap, final Promise promise) {
         final GeofencingRequest geofencingRequest = createGeofenceRequest(createGeofence(readableMap));
         addGeofence(promise, geofencingRequest, geofencingRequest.getGeofences().get(0).getRequestId());
     }
 
     @ReactMethod
-    public void add(final ReadableArray readableArray, final Promise promise) {
+    public void addGeofence(final ReadableArray readableArray, final Promise promise) {
         final List<Geofence> geofences = createGeofences(readableArray);
         final WritableArray geofenceRequestIds = Arguments.createArray();
         for (Geofence g : geofences) {
@@ -141,6 +141,7 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
         return mBoundaryPendingIntent;
     }
 
+    @SuppressLint("MissingPermission")
     private void addGeofence(final Promise promise, final GeofencingRequest geofencingRequest, final WritableArray geofenceRequestIds) {
         int permission = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -170,6 +171,7 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void addGeofence(final Promise promise, final GeofencingRequest geofencingRequest, final String requestId) {
         int permission = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 

@@ -1,0 +1,425 @@
+From ea193e3e6c36ce9e5547bec1857b76498dd47a98 Mon Sep 17 00:00:00 2001
+From: Blake Friedman <blakef@meta.com>
+Date: Thu, 29 Aug 2024 07:30:06 -0700
+Subject: [PATCH] rebuild autolinking cache if empty or invalid (#46241)
+
+Summary:
+Pull Request resolved: https://github.com/facebook/react-native/pull/46241
+
+Our test for rebuilding the `autolinking.json` file currently rebuilds everytime if the cached json file ISN'T empty.  This means users who have an empty entry get stuck there.
+
+I've also added more validation that the contents of the cached config have at a minimum the `.project.android.packageName` entry in it, otherwise it rebuilds.
+
+Changelog: [Internal]
+
+Closes 46134
+
+Reviewed By: cortinico
+
+Differential Revision: D61911114
+---
+ .../facebook/react/ReactSettingsExtension.kt  | 106 ++++++--
+ .../react/ReactSettingsExtensionTest.kt       | 237 ++++++++++++++++++
+ 2 files changed, 320 insertions(+), 23 deletions(-)
+
+diff --git a/packages/gradle-plugin/settings-plugin/src/main/kotlin/com/facebook/react/ReactSettingsExtension.kt b/packages/gradle-plugin/settings-plugin/src/main/kotlin/com/facebook/react/ReactSettingsExtension.kt
+index 8f2f4476d6dcae..be26a2233799ef 100644
+--- a/packages/gradle-plugin/settings-plugin/src/main/kotlin/com/facebook/react/ReactSettingsExtension.kt
++++ b/packages/gradle-plugin/settings-plugin/src/main/kotlin/com/facebook/react/ReactSettingsExtension.kt
+@@ -7,6 +7,7 @@
+ 
+ package com.facebook.react
+ 
++import com.facebook.react.model.ModelAutolinkingConfigJson
+ import com.facebook.react.utils.JsonUtils
+ import com.facebook.react.utils.windowsAwareCommandLine
+ import java.io.File
+@@ -53,30 +54,22 @@ abstract class ReactSettingsExtension @Inject constructor(val settings: Settings
+               .files("yarn.lock", "package-lock.json", "package.json", "react-native.config.js")
+   ) {
+     outputFile.parentFile.mkdirs()
+-    val lockFilesChanged = checkAndUpdateLockfiles(lockFiles, outputFolder)
+-    if (lockFilesChanged || outputFile.exists().not() || outputFile.length() != 0L) {
+-      val process =
+-          ProcessBuilder(command)
+-              .directory(workingDirectory)
+-              .redirectOutput(ProcessBuilder.Redirect.to(outputFile))
+-              .redirectError(ProcessBuilder.Redirect.INHERIT)
+-              .start()
+-      val finished = process.waitFor(5, TimeUnit.MINUTES)
+-      if (!finished || (process.exitValue() != 0)) {
+-        val prefixCommand =
+-            "ERROR: autolinkLibrariesFromCommand: process ${command.joinToString(" ")}"
+-        val message =
+-            if (!finished) "${prefixCommand} timed out"
+-            else "${prefixCommand} exited with error code: ${process.exitValue()}"
+-        val logger = Logging.getLogger("ReactSettingsExtension")
+-        logger.error(message)
+-        if (outputFile.length() != 0L) {
+-          logger.error(outputFile.readText().substring(0, 1024))
++
++    val updateConfig =
++        object : GenerateConfig {
++          private val pb =
++              ProcessBuilder(command)
++                  .directory(workingDirectory)
++                  .redirectOutput(ProcessBuilder.Redirect.to(outputFile))
++                  .redirectError(ProcessBuilder.Redirect.INHERIT)
++
++          override fun command(): List<String> = pb.command()
++
++          override fun start(): Process = pb.start()
+         }
+-        outputFile.delete()
+-        throw GradleException(message)
+-      }
+-    }
++
++    checkAndUpdateCache(updateConfig, outputFile, outputFolder, lockFiles)
++
+     linkLibraries(getLibrariesToAutolink(outputFile))
+   }
+ 
+@@ -107,9 +100,73 @@ abstract class ReactSettingsExtension @Inject constructor(val settings: Settings
+     }
+   }
+ 
++  internal interface GenerateConfig {
++    fun command(): List<String>
++
++    fun start(): Process
++  }
++
+   companion object {
+     private val md = MessageDigest.getInstance("SHA-256")
+ 
++    /**
++     * Determine if our cache is out-of-date
++     *
++     * @param cacheJsonConfig Our current cached autolinking.json config, which may exist
++     * @param cacheFolder The folder we store our cached SHAs and config
++     * @param lockFiles The [FileCollection] of the lockfiles to check.
++     * @return `true` if the cache needs to be rebuilt, `false` otherwise
++     */
++    internal fun isCacheDirty(
++        cacheJsonConfig: File,
++        cacheFolder: File,
++        lockFiles: FileCollection,
++    ): Boolean {
++      if (cacheJsonConfig.exists().not() || cacheJsonConfig.length() == 0L) {
++        return true
++      }
++      val lockFilesChanged = checkAndUpdateLockfiles(lockFiles, cacheFolder)
++      if (lockFilesChanged) {
++        return true
++      }
++      return isConfigModelInvalid(JsonUtils.fromAutolinkingConfigJson(cacheJsonConfig))
++    }
++
++    /**
++     * Utility function to update the settings cache only if it's entries are dirty
++     *
++     * @param updateJsonConfig A [GenerateConfig] to update the project's autolinking config
++     * @param cacheJsonConfig Our current cached autolinking.json config, which may exist
++     * @param cacheFolder The folder we store our cached SHAs and config
++     * @param lockFiles The [FileCollection] of the lockfiles to check.
++     */
++    internal fun checkAndUpdateCache(
++        updateJsonConfig: GenerateConfig,
++        cacheJsonConfig: File,
++        cacheFolder: File,
++        lockFiles: FileCollection,
++    ) {
++      if (isCacheDirty(cacheJsonConfig, cacheFolder, lockFiles)) {
++        val process = updateJsonConfig.start()
++
++        val finished = process.waitFor(5, TimeUnit.MINUTES)
++        if (!finished || (process.exitValue() != 0)) {
++          val command = updateJsonConfig.command().joinToString(" ")
++          val prefixCommand = "ERROR: autolinkLibrariesFromCommand: process $command"
++          val message =
++              if (!finished) "$prefixCommand timed out"
++              else "$prefixCommand exited with error code: ${process.exitValue()}"
++          val logger = Logging.getLogger("ReactSettingsExtension")
++          logger.error(message)
++          if (cacheJsonConfig.length() != 0L) {
++            logger.error(cacheJsonConfig.readText().substring(0, 1024))
++          }
++          cacheJsonConfig.delete()
++          throw GradleException(message)
++        }
++      }
++    }
++
+     /**
+      * Utility function to check if the provided lockfiles have been updated or not. This function
+      * will both check and update the lockfiles hashes if necessary.
+@@ -150,5 +207,8 @@ abstract class ReactSettingsExtension @Inject constructor(val settings: Settings
+ 
+     internal fun computeSha256(lockFile: File) =
+         String.format("%032x", BigInteger(1, md.digest(lockFile.readBytes())))
++
++    internal fun isConfigModelInvalid(model: ModelAutolinkingConfigJson?) =
++        model?.project?.android?.packageName == null
+   }
+ }
+diff --git a/packages/gradle-plugin/settings-plugin/src/test/kotlin/com/facebook/react/ReactSettingsExtensionTest.kt b/packages/gradle-plugin/settings-plugin/src/test/kotlin/com/facebook/react/ReactSettingsExtensionTest.kt
+index e203bff1e813d6..af957d5312b6ef 100644
+--- a/packages/gradle-plugin/settings-plugin/src/test/kotlin/com/facebook/react/ReactSettingsExtensionTest.kt
++++ b/packages/gradle-plugin/settings-plugin/src/test/kotlin/com/facebook/react/ReactSettingsExtensionTest.kt
+@@ -7,9 +7,11 @@
+ 
+ package com.facebook.react
+ 
++import com.facebook.react.ReactSettingsExtension.Companion.checkAndUpdateCache
+ import com.facebook.react.ReactSettingsExtension.Companion.checkAndUpdateLockfiles
+ import com.facebook.react.ReactSettingsExtension.Companion.computeSha256
+ import com.facebook.react.ReactSettingsExtension.Companion.getLibrariesToAutolink
++import com.facebook.react.ReactSettingsExtension.GenerateConfig
+ import java.io.File
+ import org.assertj.core.api.Assertions.assertThat
+ import org.gradle.testfixtures.ProjectBuilder
+@@ -223,6 +225,241 @@ class ReactSettingsExtensionTest {
+         .isEqualTo("9be5bca432b81becf4f54451aea021add68376330581eaa93ab9a0b3e4e29a3b")
+   }
+ 
++  @Test
++  fun skipUpdateIfConfigInCacheIsValid() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder = tempFolder.newFolder("build")
++    val generatedFolder = tempFolder.newFolder("build", "generated")
++    val outputFile =
++        File(generatedFolder, "autolinking.json").apply {
++          writeText(
++              """
++      {
++        "root": "/",
++        "reactNativePath": "/node_modules/react-native",
++        "reactNativeVersion": "0.75",
++        "dependencies": {},
++        "healthChecks": [],
++        "platforms": {
++          "ios": {},
++          "android": {}
++        },
++        "assets": [],
++        "project": {
++          "ios": {},
++          "android": {
++            "sourceDir": "/",
++            "appName": "app",
++            "packageName": "com.TestApp",
++            "applicationId": "com.TestApp",
++            "mainActivity": ".MainActivity",
++            "assets": []
++          }
++        }
++      }
++    """
++                  .trimIndent())
++        }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfileCollection = project.files("yarn.lock")
++
++    // Prebuild the shas with the invalid empty autolinking.json
++    checkAndUpdateLockfiles(lockfileCollection, buildFolder)
++
++    val monitoredUpdateConfig = createMonitoredUpdateConfig()
++
++    checkAndUpdateCache(monitoredUpdateConfig, outputFile, buildFolder, lockfileCollection)
++
++    // The autolinking.json file is valid, SHA's are untouched therefore config should NOT be
++    // refreshed
++    assertThat(monitoredUpdateConfig.run).isFalse()
++  }
++
++  @Test
++  fun checkAndUpdateConfigIfEmpty() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder = tempFolder.newFolder("build")
++    val generatedFolder = tempFolder.newFolder("build", "generated")
++    val outputFile = File(generatedFolder, "autolinking.json").apply { writeText("") }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfileCollection = project.files("yarn.lock")
++
++    // Prebuild the shas with the invalid empty autolinking.json
++    checkAndUpdateLockfiles(lockfileCollection, buildFolder)
++
++    val monitoredUpdateConfig = createMonitoredUpdateConfig()
++
++    checkAndUpdateCache(monitoredUpdateConfig, outputFile, buildFolder, lockfileCollection)
++
++    // The autolinking.json file is invalid and should be refreshed
++    assertThat(monitoredUpdateConfig.run).isTrue()
++  }
++
++  @Test
++  fun checkAndUpdateConfigIfCachedConfigInvalid() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder = tempFolder.newFolder("build")
++    val generatedFolder = tempFolder.newFolder("build", "generated")
++    val outputFile =
++        File(generatedFolder, "autolinking.json").apply {
++          writeText(
++              """
++      {
++        "project": {
++          "ios": {},
++          "android": {}
++        }
++      }
++    """
++                  .trimIndent())
++        }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfileCollection = project.files("yarn.lock")
++
++    // Prebuild the shas with the invalid empty autolinking.json
++    checkAndUpdateLockfiles(lockfileCollection, buildFolder)
++
++    val monitoredUpdateConfig = createMonitoredUpdateConfig()
++
++    checkAndUpdateCache(monitoredUpdateConfig, outputFile, buildFolder, lockfileCollection)
++
++    // The autolinking.json file is invalid and should be refreshed
++    assertThat(monitoredUpdateConfig.run).isTrue()
++  }
++
++  @Test
++  fun isCacheDirty_withMissingAutolinkingFile_returnsTrue() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder =
++        tempFolder.newFolder("build").apply {
++          File(this, "yarn.lock.sha")
++              .writeText("76046b72442ee7eb130627e56c3db7c9907eef4913b17ad130335edc0eb702a8")
++        }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfiles = project.files("yarn.lock")
++    val emptyConfigFile = File(tempFolder.newFolder("build", "autolinking"), "autolinking.json")
++
++    assertThat(ReactSettingsExtension.isCacheDirty(emptyConfigFile, buildFolder, lockfiles))
++        .isTrue()
++  }
++
++  @Test
++  fun isCacheDirty_withInvalidAutolinkingFile_returnsTrue() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder =
++        tempFolder.newFolder("build").apply {
++          File(this, "yarn.lock.sha")
++              .writeText("76046b72442ee7eb130627e56c3db7c9907eef4913b17ad130335edc0eb702a8")
++        }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfiles = project.files("yarn.lock")
++    val invalidConfigFile =
++        createJsonFile(
++            """
++      {}
++      """
++                .trimIndent())
++
++    assertThat(ReactSettingsExtension.isCacheDirty(invalidConfigFile, buildFolder, lockfiles))
++        .isTrue()
++  }
++
++  @Test
++  fun isCacheDirty_withMissingDependenciesInJson_returnsFalse() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder =
++        tempFolder.newFolder("build").apply {
++          File(this, "yarn.lock.sha")
++              .writeText("76046b72442ee7eb130627e56c3db7c9907eef4913b17ad130335edc0eb702a8")
++        }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfiles = project.files("yarn.lock")
++    val invalidConfigFile =
++        createJsonFile(
++            """
++      {
++        "reactNativeVersion": "1000.0.0"
++      }
++      """
++                .trimIndent())
++
++    assertThat(ReactSettingsExtension.isCacheDirty(invalidConfigFile, buildFolder, lockfiles))
++        .isTrue()
++  }
++
++  @Test
++  fun isCacheDirty_withExistingEmptyDependenciesInJson_returnsTrue() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder =
++        tempFolder.newFolder("build").apply {
++          File(this, "yarn.lock.sha")
++              .writeText("76046b72442ee7eb130627e56c3db7c9907eef4913b17ad130335edc0eb702a8")
++        }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfiles = project.files("yarn.lock")
++    val invalidConfigFile =
++        createJsonFile(
++            """
++      {
++        "reactNativeVersion": "1000.0.0",
++        "dependencies": {}
++      }
++      """
++                .trimIndent())
++
++    assertThat(ReactSettingsExtension.isCacheDirty(invalidConfigFile, buildFolder, lockfiles))
++        .isTrue()
++  }
++
++  @Test
++  fun isCacheDirty_withExistingDependenciesInJson_returnsTrue() {
++    val project = ProjectBuilder.builder().withProjectDir(tempFolder.root).build()
++    val buildFolder =
++        tempFolder.newFolder("build").apply {
++          File(this, "yarn.lock.sha")
++              .writeText("76046b72442ee7eb130627e56c3db7c9907eef4913b17ad130335edc0eb702a8")
++        }
++    tempFolder.newFile("yarn.lock").apply { writeText("I'm a lockfile") }
++    val lockfiles = project.files("yarn.lock")
++    val invalidConfigFile =
++        createJsonFile(
++            """
++      {
++        "reactNativeVersion": "1000.0.0",
++        "dependencies": {
++          "@react-native/oss-library-example": {
++            "root": "./node_modules/@react-native/oss-library-example",
++            "name": "@react-native/oss-library-example",
++            "platforms": {
++              "ios": {
++                "podspecPath": "./node_modules/@react-native/oss-library-example/OSSLibraryExample.podspec",
++                "version": "0.0.1",
++                "configurations": [],
++                "scriptPhases": []
++              }
++            }
++          }
++        }
++      }
++      """
++                .trimIndent())
++
++    assertThat(ReactSettingsExtension.isCacheDirty(invalidConfigFile, buildFolder, lockfiles))
++        .isTrue()
++  }
++
+   private fun createJsonFile(@Language("JSON") input: String) =
+       tempFolder.newFile().apply { writeText(input) }
++
++  private fun createMonitoredUpdateConfig() =
++      object : GenerateConfig {
++        var run = false
++
++        override fun start(): Process {
++          run = true
++          return ProcessBuilder("true").start()
++        }
++
++        override fun command(): List<String> = listOf("true")
++      }
+ }
+
+

@@ -95,6 +95,9 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.google.android.gms:play-services-location:15.0.1"
+  implementation "org.greenrobot:eventbus:3.3.1"
+
+  def playServicesLocationVersion = "15.0.1"
+  implementation "com.google.android.gms:play-services-location:$playServicesLocationVersion"
 }
 
