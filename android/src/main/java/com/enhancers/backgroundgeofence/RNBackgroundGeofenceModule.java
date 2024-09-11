@@ -6,8 +6,10 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull; // Updated import for AndroidX
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat; // Updated import for AndroidX
 
+import android.os.Build;
 import android.util.Log;
 
 import com.enhancers.backgroundgeofence.receivers.BoundaryEventBroadcastReceiver;
@@ -28,6 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -137,20 +140,28 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
             return mBoundaryPendingIntent;
         }
         Intent intent = new Intent(getReactApplicationContext(), BoundaryEventBroadcastReceiver.class);
-        mBoundaryPendingIntent = PendingIntent.getBroadcast(getReactApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBoundaryPendingIntent = PendingIntent.getBroadcast(getReactApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         return mBoundaryPendingIntent;
     }
 
     @SuppressLint("MissingPermission")
     private void addGeofence(final Promise promise, final GeofencingRequest geofencingRequest, final WritableArray geofenceRequestIds) {
-        int permission = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            permission = requestPermissions();
+        int permissionFineLocation = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionBackgroundLocation = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            permissionBackgroundLocation = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         }
 
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            promise.reject("PERM", "Access fine location is not permitted");
+        if (permissionFineLocation == PackageManager.PERMISSION_DENIED) {
+            permissionFineLocation = requestFineAndCoarseLocationPermissions();
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q && permissionBackgroundLocation == PackageManager.PERMISSION_DENIED) {
+            permissionBackgroundLocation = requestBackgroundLocationPermission();
+        }
+
+        if (permissionFineLocation != PackageManager.PERMISSION_GRANTED
+        || permissionBackgroundLocation != PackageManager.PERMISSION_GRANTED) {
+            promise.reject("PERM", "Access fine/background location is not permitted");
         } else {
             mGeofencingClient.addGeofences(
                     geofencingRequest,
@@ -173,14 +184,22 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
 
     @SuppressLint("MissingPermission")
     private void addGeofence(final Promise promise, final GeofencingRequest geofencingRequest, final String requestId) {
-        int permission = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            permission = requestPermissions();
+        int permissionFineLocation = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionBackgroundLocation = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            permissionBackgroundLocation = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         }
 
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            promise.reject("PERM", "Access fine location is not permitted.");
+        if (permissionFineLocation == PackageManager.PERMISSION_DENIED) {
+            permissionFineLocation = requestFineAndCoarseLocationPermissions();
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q && permissionBackgroundLocation == PackageManager.PERMISSION_DENIED) {
+            permissionBackgroundLocation = requestBackgroundLocationPermission();
+        }
+
+        if (permissionFineLocation != PackageManager.PERMISSION_GRANTED
+                || permissionBackgroundLocation != PackageManager.PERMISSION_GRANTED) {
+            promise.reject("PERM", "Access fine/background location is not permitted");
         } else {
             Log.i(TAG, "Attempting to add geofence.");
 
@@ -224,14 +243,32 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
                 });
     }
 
-    private int requestPermissions() {
-        ActivityCompat.requestPermissions(getReactApplicationContext().getCurrentActivity(),
-                new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                }, 1);
+    private int requestFineAndCoarseLocationPermissions() {
+        List<String> permissions = Arrays.asList(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        );
+        ActivityCompat.requestPermissions(
+                getReactApplicationContext().getCurrentActivity(),
+                permissions.toArray(new String[0]),
+                1
+        );
 
         return ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    private int requestBackgroundLocationPermission() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+            return PackageManager.PERMISSION_GRANTED;
+        }
+
+        ActivityCompat.requestPermissions(
+                getReactApplicationContext().getCurrentActivity(),
+                new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                1
+        );
+
+        return ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
     }
 
     @Override
