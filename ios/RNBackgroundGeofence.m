@@ -152,6 +152,48 @@ RCT_EXPORT_METHOD(removeAll:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
     }
 }
 
+- (RNBGLocationAuthorizationStatus) authorizationStatus
+{
+    CLAuthorizationStatus authStatus = [CLLocationManager authorizationStatus];
+    switch (authStatus) {
+        case kCLAuthorizationStatusNotDetermined:
+            return RNBGLocationAuthorizationNotDetermined;
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusDenied:
+            return RNBGLocationAuthorizationDenied;
+        case kCLAuthorizationStatusAuthorizedAlways:
+            return RNBGLocationAuthorizationAlways;
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return RNBGLocationAuthorizationForeground;
+    }
+}
+
+- (BOOL) locationServicesEnabled
+{
+    if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) { // iOS 4.x
+        return [CLLocationManager locationServicesEnabled];
+    }
+    
+    return NO;
+}
+
+RCT_EXPORT_METHOD(checkStatus:(RCTResponseSenderBlock)success failure:(RCTResponseSenderBlock)failure)
+{
+    RCTLogInfo(@"RTCBackgroundGeofence #checkStatus");
+    
+    BOOL isRunning = [facade isStarted];
+    BOOL locationServicesEnabled = [self locationServicesEnabled];
+    NSInteger authorizationStatus = [self authorizationStatus];
+
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
+    [dict setObject:[NSNumber numberWithBool:isRunning] forKey:@"isRunning"];
+    [dict setObject:[NSNumber numberWithBool:locationServicesEnabled] forKey:@"hasPermissions"]; // @deprecated
+    [dict setObject:[NSNumber numberWithBool:locationServicesEnabled] forKey:@"locationServicesEnabled"];
+    [dict setObject:[NSNumber numberWithInteger:authorizationStatus] forKey:@"authorization"];
+
+    success(@[dict]);
+}
+
 RCT_EXPORT_METHOD(triggetTestEvent:(NSString *)event)
 {
   [self sendEventWithName:event body:@{@"message": @"test"}];

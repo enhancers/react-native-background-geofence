@@ -3,6 +3,14 @@
 #import <React/RCTConvert.h>
 #import <React/RCTEventEmitter.h>
 
+typedef NS_ENUM(NSInteger, RNBGLocationAuthorizationStatus) {
+    RNBGLocationAuthorizationDenied = 0,
+    RNBGLocationAuthorizationAllowed = 1,
+    RNBGLocationAuthorizationAlways = RNBGLocationAuthorizationAllowed,
+    RNBGLocationAuthorizationForeground = 2,
+    RNBGLocationAuthorizationNotDetermined = 99,
+};
+
 @interface RNBackgroundGeofence : RCTEventEmitter <RCTBridgeModule, CLLocationManagerDelegate>
 - (bool)removeBoundary:(NSString *)boundaryId;
 - (void)removeAllBoundaries;
