@@ -6,58 +6,17 @@ import {
   Platform,
 } from 'react-native';
 
-import type { GeofenceConfig, HeadlessTaskEvent } from './types';
+import type {
+  BackgroundGeolocationError,
+  GeofenceConfig,
+  GeofenceEvent,
+  HeadlessTaskEvent,
+  ServiceStatus,
+} from './types';
 
 var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
 
 const TAG = 'RNBackgroundGeofence';
-
-export const CONSTANTS = {
-  events: [
-    'location',
-    'stationary',
-    'activity',
-    'start',
-    'stop',
-    'error',
-    'authorization',
-    'foreground',
-    'background',
-    'abort_requested',
-    'http_authorization',
-  ],
-
-  DISTANCE_FILTER_PROVIDER: 0,
-  ACTIVITY_PROVIDER: 1,
-  RAW_PROVIDER: 2,
-
-  BACKGROUND_MODE: 0,
-  FOREGROUND_MODE: 1,
-
-  NOT_AUTHORIZED: 0,
-  AUTHORIZED: 1,
-  AUTHORIZED_FOREGROUND: 2,
-
-  HIGH_ACCURACY: 0,
-  MEDIUM_ACCURACY: 100,
-  LOW_ACCURACY: 1000,
-  PASSIVE_ACCURACY: 10000,
-
-  LOG_ERROR: 'ERROR',
-  LOG_WARN: 'WARN',
-  LOG_INFO: 'INFO',
-  LOG_DEBUG: 'DEBUG',
-  LOG_TRACE: 'TRACE',
-
-  PERMISSION_DENIED: 1,
-  LOCATION_UNAVAILABLE: 2,
-  TIMEOUT: 3,
-};
-
-export const Events = {
-  EXIT: 'onExitGeofence',
-  ENTER: 'onEnterGeofence',
-};
 
 const LINKING_ERROR =
   `The package 'react-native-background-geofence' doesn't seem to be linked. Make sure: \n\n` +
@@ -114,24 +73,18 @@ export const addGeofence = (config: GeofenceConfig) => {
   });
 };
 
-export const on = (event: string, callback: (id: string) => void) => {
+export const on = (event: GeofenceEvent, callback: (id: string) => void) => {
   console.log('[geofence] added geofence event listener for event ' + event);
 
   if (typeof callback !== 'function') {
     throw TAG + ': callback function must be provided';
   }
-  if (!Object.values(Events).find((e) => e === event)) {
-    throw TAG + ': invalid event';
-  }
 
   return BackgroundGeofenceEventEmitter.addListener(event, callback);
 };
 
-export const removeAllListeners = (event: string) => {
+export const removeAllListeners = (event: GeofenceEvent) => {
   console.log('[geofence] remove all listeners');
-  if (!Object.values(Events).find((e) => e === event)) {
-    throw TAG + ': invalid event';
-  }
 
   return BackgroundGeofenceEventEmitter.removeAllListeners(event);
 };
@@ -152,13 +105,22 @@ const emptyFn = () => {};
 
 const headlessTask = (
   task: (event: HeadlessTaskEvent) => Promise<void>,
-  successFn: () => void,
-  errorFn: () => void
+  successFn?: () => void,
+  errorFn?: () => void
 ) => {
   successFn = successFn || emptyFn;
   errorFn = errorFn || emptyFn;
   AppRegistry.registerHeadlessTask(TASK_KEY, () => task);
   RNBackgroundGeofence.registerHeadlessTask(successFn, errorFn);
+};
+
+const checkStatus = (
+  successFn: (status: ServiceStatus) => void,
+  errorFn?: (error: BackgroundGeolocationError) => void
+) => {
+  successFn = successFn || emptyFn;
+  errorFn = errorFn || emptyFn;
+  RNBackgroundGeofence.checkStatus(successFn, errorFn);
 };
 
 const startTask = (callbackFn: (n: number) => void) => {
@@ -187,7 +149,6 @@ const triggetTestEvent = (event: string) => {
 };
 
 const BackgroundGeofence = {
-  CONSTANTS,
   init,
   addGeofence,
   on,
@@ -197,6 +158,7 @@ const BackgroundGeofence = {
   startTask,
   endTask,
   headlessTask,
+  checkStatus,
   triggetTestEvent,
 };
 
