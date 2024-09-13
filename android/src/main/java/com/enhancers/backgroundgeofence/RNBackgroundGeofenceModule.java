@@ -105,6 +105,11 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
     }
 
     private Geofence createGeofence(ReadableMap readableMap) {
+        Log.i(TAG, "Creating geofence ");
+        Log.i(TAG, "ID: " + readableMap.getString("id"));
+        Log.i(TAG, "Lat: " + readableMap.getDouble("lat"));
+        Log.i(TAG, "Lng: " + readableMap.getDouble("lng"));
+        Log.i(TAG, "Radius: " + readableMap.getDouble("radius"));
         return new Geofence.Builder()
                 .setRequestId(readableMap.getString("id"))
                 .setCircularRegion(readableMap.getDouble("lat"), readableMap.getDouble("lng"), (float) readableMap.getDouble("radius"))
@@ -140,7 +145,7 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
             return mBoundaryPendingIntent;
         }
         Intent intent = new Intent(getReactApplicationContext(), BoundaryEventBroadcastReceiver.class);
-        mBoundaryPendingIntent = PendingIntent.getBroadcast(getReactApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        mBoundaryPendingIntent = PendingIntent.getBroadcast(getReactApplicationContext(), 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         return mBoundaryPendingIntent;
     }
 
