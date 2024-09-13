@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Platform, TouchableOpacity } from 'react-native';
 import BackgroundGeofence, {
-  Events,
   removeAll,
   removeAllListeners,
   removeGeofence,
 } from 'react-native-background-geofence';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import styles from './App.styles';
-import Task from './Task';
+import { GeofenceEvent } from '../../src/types';
 
 const TEST_GEOFENCE_ID = 'home';
 
 export default function App() {
   const [lastEventReceived, setLastEventReceived] =
-    useState('no event received');
+    useState<any>('no event received');
 
   const requestLocationPermission = async () => {
     let permission;
@@ -30,14 +29,20 @@ export default function App() {
   useEffect(() => {
     BackgroundGeofence.init();
 
-    const onEnterEvent = BackgroundGeofence.on(Events.ENTER, (id: string) => {
-      console.log(`Get out of my ${id}!!`);
-      setLastEventReceived(Events.ENTER + ' - ' + id);
-    });
-    const onExitEvent = BackgroundGeofence.on(Events.EXIT, (id: string) => {
-      console.log(`Ya! You better get out of my ${id}!!`);
-      setLastEventReceived(Events.EXIT + ' - ' + id);
-    });
+    const onEnterEvent = BackgroundGeofence.on(
+      GeofenceEvent.ENTER,
+      (id: string) => {
+        console.log(`Get out of my ${id}!!`);
+        setLastEventReceived(GeofenceEvent.ENTER + ' - ' + id);
+      }
+    );
+    const onExitEvent = BackgroundGeofence.on(
+      GeofenceEvent.EXIT,
+      (id: string) => {
+        console.log(`Ya! You better get out of my ${id}!!`);
+        setLastEventReceived(GeofenceEvent.EXIT + ' - ' + id);
+      }
+    );
     return () => {
       console.log('remove listeners');
       onEnterEvent.remove();
@@ -89,29 +94,28 @@ export default function App() {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => removeAllListeners(Events.ENTER)}
+        onPress={() => removeAllListeners(GeofenceEvent.ENTER)}
       >
         <Text style={styles.buttonText}>REMOVE ALL 'onEnter' LISTENERS</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => removeAllListeners(Events.EXIT)}
+        onPress={() => removeAllListeners(GeofenceEvent.EXIT)}
       >
         <Text style={styles.buttonText}>REMOVE ALL 'onExit' LISTENERS</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => BackgroundGeofence.triggetTestEvent(Events.ENTER)}
+        onPress={() => BackgroundGeofence.triggetTestEvent(GeofenceEvent.ENTER)}
       >
         <Text style={styles.buttonText}>Trigger Test Event "ENTER"</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => BackgroundGeofence.triggetTestEvent(Events.EXIT)}
+        onPress={() => BackgroundGeofence.triggetTestEvent(GeofenceEvent.EXIT)}
       >
         <Text style={styles.buttonText}>Trigger Test Event "EXIT"</Text>
       </TouchableOpacity>
-      <Task />
     </View>
   );
 }

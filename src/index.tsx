@@ -58,6 +58,7 @@ export const init = () => {
     () => HeadlessBoundaryEventTask
   );
 };
+
 export const addGeofence = (config: GeofenceConfig) => {
   if (!config || (config.constructor !== Array && typeof config !== 'object')) {
     throw TAG + ': a boundary must be an array or non-null object';
@@ -123,27 +124,6 @@ const checkStatus = (
   RNBackgroundGeofence.checkStatus(successFn, errorFn);
 };
 
-const startTask = (callbackFn: (n: number) => void) => {
-  if (typeof callbackFn !== 'function') {
-    throw 'RNBackgroundGeolocation: startTask requires callback function';
-  }
-
-  if (typeof RNBackgroundGeofence.startTask === 'function') {
-    RNBackgroundGeofence.startTask(callbackFn);
-  } else {
-    // android does not need background tasks so we invoke callbackFn directly
-    callbackFn(-1);
-  }
-};
-
-const endTask = (taskKey: number) => {
-  if (typeof RNBackgroundGeofence.endTask === 'function') {
-    RNBackgroundGeofence.endTask(taskKey);
-  } else {
-    // noop
-  }
-};
-
 const triggetTestEvent = (event: string) => {
   RNBackgroundGeofence.triggetTestEvent(event);
 };
@@ -155,8 +135,6 @@ const BackgroundGeofence = {
   removeAllListeners,
   removeAll,
   removeGeofence,
-  startTask,
-  endTask,
   headlessTask,
   checkStatus,
   triggetTestEvent,
