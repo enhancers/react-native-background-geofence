@@ -78,7 +78,8 @@
     "react-native-builder-bob": "^0.30.2",
     "release-it": "^15.0.0",
     "turbo": "^1.10.7",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "@babel/runtime": "^7.25.6"
   },
   "resolutions": {
     "@types/react": "^18.2.44"
@@ -180,5 +181,7 @@
     "type": "module-legacy",
     "languages": "kotlin-objc",
     "version": "0.41.0"
+  },
+  "dependencies": {
   }
 }
