@@ -3,17 +3,21 @@ package com.enhancers.backgroundgeofence;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull; // Updated import for AndroidX
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat; // Updated import for AndroidX
+import androidx.core.location.LocationManagerCompat;
 
+import android.location.LocationManager;
 import android.os.Build;
 import android.util.Log;
 
 import com.enhancers.backgroundgeofence.receivers.BoundaryEventBroadcastReceiver;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -22,6 +26,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -102,6 +107,21 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
         GeofencingRequest geofencingRequest = createGeofenceRequest(createGeofences(readableArray));
 
         addGeofence(promise, geofencingRequest, geofenceRequestIds);
+    }
+
+    @ReactMethod
+    public void checkStatus(Callback success, Callback failure) {
+        Log.i(TAG, "RNBackgroundGeofence #checkStatus");
+
+        try {
+            WritableMap dict = Arguments.createMap();
+            dict.putBoolean("locationServicesEnabled", isLocationEnabled(getReactApplicationContext()));
+            dict.putInt("authorization", hasPermissions() ? 1 : 0);
+
+            success.invoke(dict);
+        } catch (Exception e) {
+            failure.invoke(e.getMessage());
+        }
     }
 
     private Geofence createGeofence(ReadableMap readableMap) {
@@ -185,6 +205,21 @@ public class RNBackgroundGeofenceModule extends ReactContextBaseJavaModule imple
                         }
                     });
         }
+    }
+
+    private boolean hasPermissions() {
+        int permissionFineLocation = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionBackgroundLocation = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            permissionBackgroundLocation = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+            return permissionFineLocation == PackageManager.PERMISSION_GRANTED && permissionBackgroundLocation == PackageManager.PERMISSION_GRANTED;
+        }
+        return permissionFineLocation == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean isLocationEnabled(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return LocationManagerCompat.isLocationEnabled(locationManager);
     }
 
     @SuppressLint("MissingPermission")
