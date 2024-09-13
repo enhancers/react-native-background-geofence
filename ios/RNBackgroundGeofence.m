@@ -182,7 +182,6 @@ RCT_EXPORT_METHOD(checkStatus:(RCTResponseSenderBlock)success failure:(RCTRespon
 
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
     [dict setObject:[NSNumber numberWithBool:isRunning] forKey:@"isRunning"];
-    [dict setObject:[NSNumber numberWithBool:locationServicesEnabled] forKey:@"hasPermissions"]; // @deprecated
     [dict setObject:[NSNumber numberWithBool:locationServicesEnabled] forKey:@"locationServicesEnabled"];
     [dict setObject:[NSNumber numberWithInteger:authorizationStatus] forKey:@"authorization"];
 
