@@ -19,16 +19,11 @@ RCT_EXPORT_MODULE()
 
         self.locationManager.allowsBackgroundLocationUpdates = YES;
         self.locationManager.pausesLocationUpdatesAutomatically = NO;
+        self.isStarted = NO;
 
     }
 
     return self;
-}
-
-RCT_EXPORT_METHOD(startTask:(RCTResponseSenderBlock)callback)
-{
-    NSUInteger taskKey = [[RNBGBackgroundTaskManager sharedTasks] beginTask];
-    callback(@[[NSNumber numberWithInteger:taskKey]]);
 }
 
 RCT_EXPORT_METHOD(endTask:(NSNumber* _Nonnull)taskKey)
@@ -180,8 +175,8 @@ RCT_EXPORT_METHOD(removeAll:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
 RCT_EXPORT_METHOD(checkStatus:(RCTResponseSenderBlock)success failure:(RCTResponseSenderBlock)failure)
 {
     RCTLogInfo(@"RTCBackgroundGeofence #checkStatus");
-    
-    BOOL isRunning = [facade isStarted];
+
+    BOOL isRunning = [self isStarted];
     BOOL locationServicesEnabled = [self locationServicesEnabled];
     NSInteger authorizationStatus = [self authorizationStatus];
 
