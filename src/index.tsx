@@ -46,13 +46,10 @@ const HeadlessBoundaryEventTask = async ({
   event: string;
   ids: any;
 }) => {
-  console.log(event, ids);
   BackgroundGeofenceEventEmitter.emit(event, ids);
 };
 
 export const init = () => {
-  console.log('[geofence] initialize');
-
   AppRegistry.registerHeadlessTask(
     'OnBoundaryEvent',
     () => HeadlessBoundaryEventTask
@@ -75,8 +72,6 @@ export const addGeofence = (config: GeofenceConfig) => {
 };
 
 export const on = (event: GeofenceEvent, callback: (id: string) => void) => {
-  console.log('[geofence] added geofence event listener for event ' + event);
-
   if (typeof callback !== 'function') {
     throw TAG + ': callback function must be provided';
   }
@@ -85,12 +80,9 @@ export const on = (event: GeofenceEvent, callback: (id: string) => void) => {
 };
 
 export const removeAllListeners = (event: GeofenceEvent) => {
-  console.log('[geofence] remove all listeners');
-
   return BackgroundGeofenceEventEmitter.removeAllListeners(event);
 };
 export const removeAll = () => {
-  console.log('[geofence] remove all boundaries');
   return RNBackgroundGeofence.removeAll();
 };
 
@@ -140,6 +132,6 @@ const BackgroundGeofence = {
   triggetTestEvent,
 };
 
-export { GeofenceEvent };
+export * from './types';
 
 export default BackgroundGeofence;
