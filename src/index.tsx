@@ -6,12 +6,12 @@ import {
   Platform,
 } from 'react-native';
 
-import type {
+import {
   BackgroundGeolocationError,
   GeofenceConfig,
-  GeofenceEvent,
   HeadlessTaskEvent,
   ServiceStatus,
+  GeofenceEvent,
 } from './types';
 
 var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
