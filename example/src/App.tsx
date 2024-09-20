@@ -4,7 +4,7 @@ import BackgroundGeofence, {
   removeAll,
   removeAllListeners,
   removeGeofence,
-} from 'react-native-background-geofence';
+} from '@enhancers/react-native-background-geofence';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import styles from './App.styles';
 import { GeofenceEvent } from '../../src/types';
@@ -32,19 +32,18 @@ export default function App() {
     const onEnterEvent = BackgroundGeofence.on(
       GeofenceEvent.ENTER,
       (id: string) => {
-        console.log(`Get out of my ${id}!!`);
+        console.log(`Enter event ${id}!!`);
         setLastEventReceived(GeofenceEvent.ENTER + ' - ' + id);
       }
     );
     const onExitEvent = BackgroundGeofence.on(
       GeofenceEvent.EXIT,
       (id: string) => {
-        console.log(`Ya! You better get out of my ${id}!!`);
+        console.log(`Exit event ${id}!!`);
         setLastEventReceived(GeofenceEvent.EXIT + ' - ' + id);
       }
     );
     return () => {
-      console.log('remove listeners');
       onEnterEvent.remove();
       onExitEvent.remove();
     };
@@ -61,15 +60,17 @@ export default function App() {
 
       BackgroundGeofence.addGeofence({
         id: TEST_GEOFENCE_ID,
-        lat: 34.017714,
-        lng: -118.499033,
-        radius: 50, // in meters
+        lat: 42.4389,
+        lng: -71.4493,
+        radius: 500, // in meters
         enterGeofenceNotificationTitle: 'enter-titolo',
         enterGeofenceNotificationText: 'enter-testo',
         exitGeofenceNotificationTitle: 'exit-titolo',
         exitGeofenceNotificationText: 'exit-testo',
       })
-        .then((id) => console.log('[geofence] Added geofence with id', id))
+        .then((id: string) =>
+          console.log('[geofence] Added geofence with id', id)
+        )
         .catch((e: any) =>
           console.error('[geofence] Error in BackgroundGeofence.addGeofence', e)
         );
