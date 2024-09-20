@@ -19,7 +19,6 @@ RCT_EXPORT_MODULE()
 
         self.locationManager.allowsBackgroundLocationUpdates = YES;
         self.locationManager.pausesLocationUpdatesAutomatically = NO;
-        self.isStarted = NO;
 
     }
 
@@ -176,12 +175,10 @@ RCT_EXPORT_METHOD(checkStatus:(RCTResponseSenderBlock)success failure:(RCTRespon
 {
     RCTLogInfo(@"RTCBackgroundGeofence #checkStatus");
 
-    BOOL isRunning = [self isStarted];
     BOOL locationServicesEnabled = [self locationServicesEnabled];
     NSInteger authorizationStatus = [self authorizationStatus];
 
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
-    [dict setObject:[NSNumber numberWithBool:isRunning] forKey:@"isRunning"];
     [dict setObject:[NSNumber numberWithBool:locationServicesEnabled] forKey:@"locationServicesEnabled"];
     [dict setObject:[NSNumber numberWithInteger:authorizationStatus] forKey:@"authorization"];
 
