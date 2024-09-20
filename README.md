@@ -85,7 +85,7 @@ const onExitEvent = BackgroundGeofence.on(
 Parameters
 BackgroundGeofence.on(eventType, callback)
   -  eventType (string): Type of geofence event to listen for. It can be one of the following:
-    - GeofenceEvent.ENTER: Triggered when the device enters a geofenced area.
-    - GeofenceEvent.EXIT: Triggered when the device exits a geofenced area.
+     -  GeofenceEvent.ENTER: Triggered when the device enters a geofenced area.
+     -  GeofenceEvent.EXIT: Triggered when the device exits a geofenced area.
   - callback (function): The function to be executed when the specified event occurs. The callback receives the following parameter:
     - id (string): The ID of the geofence that triggered the event.
