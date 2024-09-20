@@ -58,3 +58,34 @@ Parameters
 - exitGeofenceNotificationTitle (string): Title for the notification displayed when exiting the geofence.
 - exitGeofenceNotificationText (string): Text for the notification displayed when exiting the geofence.
 
+# Geofence Event Listeners
+
+The following code demonstrates how to set up listeners for `ENTER` and `EXIT` geofence events using the `BackgroundGeofence.on` method. These listeners allow you to execute specific actions when a device enters or exits a geofenced area.
+
+## Usage
+
+```typescript
+const onEnterEvent = BackgroundGeofence.on(
+  GeofenceEvent.ENTER,
+  (id: string) => {
+    console.log(`Enter event ${id}!!`);
+    setLastEventReceived(GeofenceEvent.ENTER + ' - ' + id);
+  }
+);
+
+const onExitEvent = BackgroundGeofence.on(
+  GeofenceEvent.EXIT,
+  (id: string) => {
+    console.log(`Exit event ${id}!!`);
+    setLastEventReceived(GeofenceEvent.EXIT + ' - ' + id);
+  }
+);
+```
+
+Parameters
+BackgroundGeofence.on(eventType, callback)
+  -  eventType (string): Type of geofence event to listen for. It can be one of the following:
+    - GeofenceEvent.ENTER: Triggered when the device enters a geofenced area.
+    - GeofenceEvent.EXIT: Triggered when the device exits a geofenced area.
+  - callback (function): The function to be executed when the specified event occurs. The callback receives the following parameter:
+    - id (string): The ID of the geofence that triggered the event.
