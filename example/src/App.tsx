@@ -52,7 +52,7 @@ export default function App() {
   const addGeofenceTest = () => {
     requestLocationPermission().then((res: any) => {
       if (res !== RESULTS.GRANTED) {
-        console.error('Location permissions not granted');
+        console.error('Location permissions not granted', res);
         return;
       }
 
@@ -60,9 +60,9 @@ export default function App() {
 
       BackgroundGeofence.addGeofence({
         id: TEST_GEOFENCE_ID,
-        lat: 42.4389,
-        lng: -71.4493,
-        radius: 500, // in meters
+        lat: 34.0224,
+        lng: -118.4384,
+        radius: 1000, // in meters
         enterGeofenceNotificationTitle: 'enter-titolo',
         enterGeofenceNotificationText: 'enter-testo',
         exitGeofenceNotificationTitle: 'exit-titolo',
