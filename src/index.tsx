@@ -96,15 +96,8 @@ export const removeGeofence = (id: string) => {
 
 const emptyFn = () => {};
 
-const headlessTask = (
-  task: (event: HeadlessTaskEvent) => Promise<void>,
-  successFn?: () => void,
-  errorFn?: () => void
-) => {
-  successFn = successFn || emptyFn;
-  errorFn = errorFn || emptyFn;
+const headlessTask = (task: (event: HeadlessTaskEvent) => Promise<void>) => {
   AppRegistry.registerHeadlessTask(TASK_KEY, () => task);
-  RNBackgroundGeofence.registerHeadlessTask(successFn, errorFn);
 };
 
 const checkStatus = (
