@@ -26,8 +26,21 @@ Call BackgroundGeofence.init() mehtod
 
 `BackgroundGeofence.addGeofence` is a method used to add a geofence with specific parameters such as latitude, longitude, radius, and notifications for entering and exiting the geofence.
 
-## Usage
+## Configuration (Android)
+Add this to your AndroidManifest.xml file: 
+```xml 
+<service
+android:name="com.enhancers.backgroundgeofence.services.BoundaryEventJobIntentService"
+android:enabled="true"
+android:exported="true"
+android:permission="android.permission.BIND_JOB_SERVICE" />
+<service android:name="com.enhancers.backgroundgeofence.services.BoundaryEventHeadlessTaskService" />
+<receiver
+android:name="com.enhancers.backgroundgeofence.receivers.BoundaryEventBroadcastReceiver"
+android:enabled="true" />
+```
 
+## Usage
 ```typescript
 BackgroundGeofence.addGeofence({
     id: TEST_GEOFENCE_ID,
