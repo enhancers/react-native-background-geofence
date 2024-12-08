@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "rootDir": ".",
+    "paths": {
+      "@enhancers/react-native-background-geofence": ["./src/index"]
+    },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,

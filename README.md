@@ -36,8 +36,6 @@ Add this keys to app info.plist file
 
 ## Usage
 
-Call BackgroundGeofence.init() mehtod
-
 # BackgroundGeofence.addGeofence
 
 `BackgroundGeofence.addGeofence` is a method used to add a geofence with specific parameters such as latitude, longitude, radius, and notifications for entering and exiting the geofence.
