@@ -27,8 +27,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    BackgroundGeofence.init();
-
     const onEnterEvent = BackgroundGeofence.on(
       GeofenceEvent.ENTER,
       (id: string) => {
@@ -60,17 +58,17 @@ export default function App() {
 
       BackgroundGeofence.addGeofence({
         id: TEST_GEOFENCE_ID,
-        lat: 34.0224,
-        lng: -118.4384,
-        radius: 1000, // in meters
+        lat: 45.0725,
+        lng: 7.6833,
+        radius: 100, // in meters
         enterGeofenceNotificationTitle: 'enter-titolo',
         enterGeofenceNotificationText: 'enter-testo',
         exitGeofenceNotificationTitle: 'exit-titolo',
         exitGeofenceNotificationText: 'exit-testo',
       })
-        .then((id: string) =>
-          console.log('[geofence] Added geofence with id', id)
-        )
+        .then((id) => {
+          console.log('[geofence] Added geofence with id', id);
+        })
         .catch((e: any) =>
           console.error('[geofence] Error in BackgroundGeofence.addGeofence', e)
         );

@@ -49,12 +49,10 @@ const HeadlessBoundaryEventTask = async ({
   BackgroundGeofenceEventEmitter.emit(event, ids);
 };
 
-export const init = () => {
-  AppRegistry.registerHeadlessTask(
-    'OnBoundaryEvent',
-    () => HeadlessBoundaryEventTask
-  );
-};
+AppRegistry.registerHeadlessTask(
+  'OnBoundaryEvent',
+  () => HeadlessBoundaryEventTask
+);
 
 export const addGeofence = (config: GeofenceConfig) => {
   if (!config || (config.constructor !== Array && typeof config !== 'object')) {
@@ -114,7 +112,6 @@ const triggetTestEvent = (event: string) => {
 };
 
 const BackgroundGeofence = {
-  init,
   addGeofence,
   on,
   removeAllListeners,
