@@ -1,6 +1,6 @@
 {
   "name": "@enhancers/react-native-background-geofence",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "background geofence",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
