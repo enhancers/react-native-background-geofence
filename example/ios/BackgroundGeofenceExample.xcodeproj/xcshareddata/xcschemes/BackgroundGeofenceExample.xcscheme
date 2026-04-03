@@ -60,10 +60,6 @@
             ReferencedContainer = "container:BackgroundGeofenceExample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <LocationScenarioReference
-         identifier = "../../../../../Downloads/route.gpx"
-         referenceType = "0">
-      </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

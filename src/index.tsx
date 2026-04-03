@@ -1,10 +1,4 @@
-// *****
-import {
-  AppRegistry,
-  NativeEventEmitter,
-  NativeModules,
-  Platform,
-} from 'react-native';
+import {AppRegistry, NativeEventEmitter} from 'react-native';
 
 import {
   BackgroundGeolocationError,
@@ -14,29 +8,16 @@ import {
   ServiceStatus,
 } from './types';
 
+import NativeBackgroundGeofence from './NativeBackgroundGeofence';
+
 var TASK_KEY = 'com.enhancers.backgroundgeofence.react.headless.Task';
 
 const TAG = 'RNBackgroundGeofence';
 
-const LINKING_ERROR =
-  `The package 'react-native-background-geofence' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
-
-export const RNBackgroundGeofence = NativeModules.RNBackgroundGeofence
-  ? NativeModules.RNBackgroundGeofence
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+export {NativeBackgroundGeofence as RNBackgroundGeofence};
 
 export const BackgroundGeofenceEventEmitter = new NativeEventEmitter(
-  RNBackgroundGeofence
+  NativeBackgroundGeofence
 );
 
 const HeadlessBoundaryEventTask = async ({
@@ -84,7 +65,7 @@ export const addGeofence = (config: GeofenceConfig) => {
     if (typeof config === 'object' && !config.id) {
       reject(TAG + ': an id is required');
     }
-    RNBackgroundGeofence.addGeofence(config)
+    NativeBackgroundGeofence.addGeofence(config)
       .then((id: string) => resolve(id))
       .catch((e: any) => reject(e));
   });
@@ -117,7 +98,7 @@ export const removeAllListeners = (event: GeofenceEvent) => {
   return BackgroundGeofenceEventEmitter.removeAllListeners(event);
 };
 export const removeAll = () => {
-  return RNBackgroundGeofence.removeAll();
+  return NativeBackgroundGeofence.removeAll();
 };
 
 /**
@@ -136,7 +117,7 @@ export const removeGeofence = (id: string) => {
     throw TAG + ': id must be a string';
   }
 
-  return RNBackgroundGeofence.removeGeofence(id);
+  return NativeBackgroundGeofence.removeGeofence(id);
 };
 
 const emptyFn = () => {};
@@ -151,7 +132,7 @@ const checkStatus = (
 ) => {
   successFn = successFn || emptyFn;
   errorFn = errorFn || emptyFn;
-  RNBackgroundGeofence.checkStatus(successFn, errorFn);
+  NativeBackgroundGeofence.checkStatus(successFn as any, errorFn as any);
 };
 
 /**
@@ -163,7 +144,7 @@ const checkStatus = (
  **/
 
 const triggetTestEvent = (event: string) => {
-  RNBackgroundGeofence.triggetTestEvent(event);
+  NativeBackgroundGeofence.triggetTestEvent(event);
 };
 
 const BackgroundGeofence = {

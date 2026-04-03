@@ -1,6 +1,10 @@
 # react-native-background-geofence
 
-background geofence
+A React Native library for background geofencing on iOS and Android. Monitor circular geographic regions and receive events when a device enters or exits them, even when the app is in the background.
+
+Supports both the **old React Native architecture** (Bridge) and the **new architecture** (TurboModules).
+
+---
 
 ## Installation
 
@@ -8,97 +12,269 @@ background geofence
 npm install @enhancers/react-native-background-geofence
 ```
 
-# Configuration
+```sh
+yarn add @enhancers/react-native-background-geofence
+```
 
-## Android
-Add this to your AndroidManifest.xml file: 
-```xml 
+```sh
+pnpm add @enhancers/react-native-background-geofence
+```
+
+---
+
+## Configuration
+
+### Android
+
+Add the following entries inside the `<application>` tag of your `AndroidManifest.xml`:
+
+```xml
 <service
-android:name="com.enhancers.backgroundgeofence.services.BoundaryEventJobIntentService"
-android:enabled="true"
-android:exported="true"
-android:permission="android.permission.BIND_JOB_SERVICE" />
+    android:name="com.enhancers.backgroundgeofence.services.BoundaryEventJobIntentService"
+    android:enabled="true"
+    android:exported="true"
+    android:permission="android.permission.BIND_JOB_SERVICE" />
 <service android:name="com.enhancers.backgroundgeofence.services.BoundaryEventHeadlessTaskService" />
 <receiver
-android:name="com.enhancers.backgroundgeofence.receivers.BoundaryEventBroadcastReceiver"
-android:enabled="true" />
+    android:name="com.enhancers.backgroundgeofence.receivers.BoundaryEventBroadcastReceiver"
+    android:enabled="true" />
 ```
 
-## IOS
+The following permissions are declared automatically by the library manifest:
 
-Add this keys to app info.plist file
-```
+- `ACCESS_FINE_LOCATION`
+- `ACCESS_BACKGROUND_LOCATION`
+- `WAKE_LOCK`
+- `POST_NOTIFICATIONS`
+
+> **Note:** On Android 10+ you must explicitly request `ACCESS_BACKGROUND_LOCATION` at runtime. On Android 13+ you must also request `POST_NOTIFICATIONS`.
+
+### iOS
+
+Add the following keys to your `Info.plist`:
+
+```xml
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Background Geofencing</string>
+<string>This app uses your location to monitor geofenced areas.</string>
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Background Geofencing</string>
+<string>This app uses your location in the background to monitor geofenced areas.</string>
 ```
 
-## Usage
+Enable **Background Modes → Location updates** in your Xcode project's Signing & Capabilities tab.
 
-# BackgroundGeofence.addGeofence
+---
 
-`BackgroundGeofence.addGeofence` is a method used to add a geofence with specific parameters such as latitude, longitude, radius, and notifications for entering and exiting the geofence.
+## Requesting Permissions
 
-## Usage
+Before adding geofences, request the necessary location permissions from the user.
+
 ```typescript
-BackgroundGeofence.addGeofence({
-    id: TEST_GEOFENCE_ID,
-    lat: 34.017714,
-    lng: -118.499033,
-    radius: 50, // in meters
-    enterGeofenceNotificationTitle: 'enter-titolo',
-    enterGeofenceNotificationText: 'enter-testo',
-    exitGeofenceNotificationTitle: 'exit-titolo',
-    exitGeofenceNotificationText: 'exit-testo',
-    })
-    .then((id: string) =>
-        console.log('[geofence] Added geofence with id', id)
-    )
-    .catch((e: any) =>
-        console.error('[geofence] Error in BackgroundGeofence.addGeofence', e)
+import { Platform, PermissionsAndroid } from 'react-native';
+
+async function requestPermissions() {
+  if (Platform.OS === 'android') {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
     );
+
+    if (Platform.Version >= 29) {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
+      );
+    }
+
+    if (Platform.Version >= 33) {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+    }
+  } else {
+    // iOS: use a library like react-native-permissions to request
+    // 'always' location authorization
+  }
+}
+```
+
+---
+
+## Usage
+
+### Adding a Geofence
+
+```typescript
+import BackgroundGeofence from '@enhancers/react-native-background-geofence';
+
+BackgroundGeofence.addGeofence({
+  id: 'my-geofence-1',
+  lat: 45.0703,
+  lng: 7.68687,
+  radius: 100, // meters
+  enterGeofenceNotificationTitle: 'You arrived!',
+  enterGeofenceNotificationText: 'You entered the geofenced area.',
+  exitGeofenceNotificationTitle: 'You left!',
+  exitGeofenceNotificationText: 'You exited the geofenced area.',
+})
+  .then((id: string) => console.log('Geofence added:', id))
+  .catch((error) => console.error('Failed to add geofence:', error));
+```
+
+### Listening to Events
+
+```typescript
+import BackgroundGeofence, { GeofenceEvent } from '@enhancers/react-native-background-geofence';
+
+const enterSubscription = BackgroundGeofence.on(
+  GeofenceEvent.ENTER,
+  (id: string) => {
+    console.log('Entered geofence:', id);
+  }
+);
+
+const exitSubscription = BackgroundGeofence.on(
+  GeofenceEvent.EXIT,
+  (id: string) => {
+    console.log('Exited geofence:', id);
+  }
+);
+
+// Clean up when no longer needed
+enterSubscription.remove();
+exitSubscription.remove();
+```
+
+### Removing Geofences
+
+```typescript
+// Remove a specific geofence
+BackgroundGeofence.removeGeofence('my-geofence-1')
+  .then(() => console.log('Geofence removed'))
+  .catch((error) => console.error('Failed to remove geofence:', error));
+
+// Remove all geofences
+BackgroundGeofence.removeAll()
+  .then(() => console.log('All geofences removed'))
+  .catch((error) => console.error('Failed to remove geofences:', error));
+```
+
+### Checking Service Status
+
+```typescript
+BackgroundGeofence.checkStatus(
+  (status) => {
+    console.log('Service running:', status.isRunning);
+    console.log('Location services enabled:', status.locationServicesEnabled);
+    console.log('Authorization:', status.authorization);
+    // authorization: 0 = denied, 1 = always, 2 = when in use
+  },
+  (error) => {
+    console.error('Status check failed:', error);
+  }
+);
+```
+
+### Registering a Headless Task (Android)
+
+For handling geofence events when the app is fully closed, register a headless task in your `index.js`:
+
+```typescript
+import BackgroundGeofence from '@enhancers/react-native-background-geofence';
+
+BackgroundGeofence.headlessTask(async (event) => {
+  console.log('Headless task event:', event.name, event.params);
 });
 ```
 
-Parameters
-- id (string): Unique identifier for the geofence.
-- lat (number): Latitude of the geofence center.
-- lng (number): Longitude of the geofence center.
-- radius (number): Radius of the geofence in meters.
-- enterGeofenceNotificationTitle (string): Title for the notification displayed when entering the geofence.
-- enterGeofenceNotificationText (string): Text for the notification displayed when entering the geofence.
-- exitGeofenceNotificationTitle (string): Title for the notification displayed when exiting the geofence.
-- exitGeofenceNotificationText (string): Text for the notification displayed when exiting the geofence.
+---
 
-# Geofence Event Listeners
+## API Reference
 
-The following code demonstrates how to set up listeners for `ENTER` and `EXIT` geofence events using the `BackgroundGeofence.on` method. These listeners allow you to execute specific actions when a device enters or exits a geofenced area.
+### `addGeofence(config: GeofenceConfig): Promise<string>`
 
-## Usage
+Adds a new geofence. Returns the ID of the created geofence.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for the geofence |
+| `lat` | `number` | Yes | Latitude of the center point |
+| `lng` | `number` | Yes | Longitude of the center point |
+| `radius` | `number` | Yes | Radius in meters |
+| `enterGeofenceNotificationTitle` | `string` | No | Notification title on enter |
+| `enterGeofenceNotificationText` | `string` | No | Notification body on enter |
+| `exitGeofenceNotificationTitle` | `string` | No | Notification title on exit |
+| `exitGeofenceNotificationText` | `string` | No | Notification body on exit |
+
+### `removeGeofence(id: string): Promise<void>`
+
+Removes the geofence with the given ID.
+
+### `removeAll(): Promise<void>`
+
+Removes all registered geofences.
+
+### `on(event: GeofenceEvent, callback: (id: string) => void): EmitterSubscription`
+
+Subscribes to a geofence event. Returns a subscription — call `.remove()` on it to unsubscribe.
+
+| Value | Description |
+|-------|-------------|
+| `GeofenceEvent.ENTER` | Fired when the device enters a geofenced region |
+| `GeofenceEvent.EXIT` | Fired when the device exits a geofenced region |
+
+### `removeAllListeners(event: GeofenceEvent): void`
+
+Removes all listeners for the given event type.
+
+### `checkStatus(successFn, errorFn?): void`
+
+Checks the current status of location services and permissions.
+
+The `successFn` receives a `ServiceStatus` object:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `isRunning` | `boolean` | Whether the geofencing service is active |
+| `locationServicesEnabled` | `boolean` | Whether device location is enabled |
+| `authorization` | `AuthorizationStatus` | `0` = denied, `1` = always, `2` = when in use |
+
+### `headlessTask(task: (event: HeadlessTaskEvent) => Promise<void>): void`
+
+Registers a handler for background headless task events (Android only).
+
+---
+
+## Types
 
 ```typescript
-const onEnterEvent = BackgroundGeofence.on(
-  GeofenceEvent.ENTER,
-  (id: string) => {
-    console.log(`Enter event ${id}!!`);
-    setLastEventReceived(GeofenceEvent.ENTER + ' - ' + id);
-  }
-);
+enum GeofenceEvent {
+  ENTER = 'onEnterGeofence',
+  EXIT = 'onExitGeofence',
+}
 
-const onExitEvent = BackgroundGeofence.on(
-  GeofenceEvent.EXIT,
-  (id: string) => {
-    console.log(`Exit event ${id}!!`);
-    setLastEventReceived(GeofenceEvent.EXIT + ' - ' + id);
-  }
-);
+interface GeofenceConfig {
+  id: string;
+  lat: number;
+  lng: number;
+  radius: number;
+  enterGeofenceNotificationTitle?: string;
+  enterGeofenceNotificationText?: string;
+  exitGeofenceNotificationTitle?: string;
+  exitGeofenceNotificationText?: string;
+}
+
+interface ServiceStatus {
+  isRunning: boolean;
+  locationServicesEnabled: boolean;
+  authorization: AuthorizationStatus; // 0 | 1 | 2
+}
+
+interface HeadlessTaskEvent {
+  name: 'onEnterGeofence' | 'onExitGeofence';
+  params: any;
+}
 ```
 
-Parameters
-BackgroundGeofence.on(eventType, callback)
-  -  eventType (string): Type of geofence event to listen for. It can be one of the following:
-     -  GeofenceEvent.ENTER: Triggered when the device enters a geofenced area.
-     -  GeofenceEvent.EXIT: Triggered when the device exits a geofenced area.
-  - callback (function): The function to be executed when the specified event occurs. The callback receives the following parameter:
-    - id (string): The ID of the geofence that triggered the event.
+---
+
+## License
+
+MIT

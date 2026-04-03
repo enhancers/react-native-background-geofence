@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.enhancers.backgroundgeofence.services.BoundaryEventJobIntentService;
 
-import static com.enhancers.backgroundgeofence.RNBackgroundGeofenceModule.TAG;
+import static com.enhancers.backgroundgeofence.RNBackgroundGeofenceModuleImpl.TAG;
 
 public class BoundaryEventBroadcastReceiver extends BroadcastReceiver {
 

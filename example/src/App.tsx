@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Platform, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, Platform, TouchableOpacity } from 'react-native';
 import BackgroundGeofence, {
   removeAll,
   removeAllListeners,
   removeGeofence,
 } from '@enhancers/react-native-background-geofence';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { request, requestNotifications, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
 import styles from './App.styles';
 import { GeofenceEvent } from '../../src/types';
 
@@ -16,14 +16,27 @@ export default function App() {
     useState<any>('no event received');
 
   const requestLocationPermission = async () => {
-    let permission;
     if (Platform.OS === 'android') {
-      permission = PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
-    } else {
-      permission = PERMISSIONS.IOS.LOCATION_ALWAYS;
-    }
+      if (parseInt(String(Platform.Version), 10) >= 33) {
+        await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+      }
 
-    return await request(permission);
+      const fineResult = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+      if (fineResult !== RESULTS.GRANTED) {
+        return fineResult;
+      }
+
+      // On Android 10+ background location must be requested separately
+      if (parseInt(String(Platform.Version), 10) >= 29) {
+        return await request(PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION);
+      }
+
+      return fineResult;
+    } else {
+      // Also request notification permission so local notifications are shown
+      await requestNotifications(['alert', 'sound']);
+      return await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
+    }
   };
 
   useEffect(() => {
@@ -49,8 +62,19 @@ export default function App() {
 
   const addGeofenceTest = () => {
     requestLocationPermission().then((res: any) => {
+      if (res === RESULTS.BLOCKED) {
+        Alert.alert(
+          'Permission blocked',
+          'Location permission is blocked. Please enable it in Settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => openSettings() },
+          ]
+        );
+        return;
+      }
       if (res !== RESULTS.GRANTED) {
-        console.error('Location permissions not granted', res);
+        Alert.alert('Permission denied', 'Location permission is required to add a geofence.');
         return;
       }
 
@@ -58,8 +82,8 @@ export default function App() {
 
       BackgroundGeofence.addGeofence({
         id: TEST_GEOFENCE_ID,
-        lat: 45.0725,
-        lng: 7.6833,
+        lat: 45.0703,
+        lng: 7.68687, // Turin city center
         radius: 100, // in meters
         enterGeofenceNotificationTitle: 'enter-titolo',
         enterGeofenceNotificationText: 'enter-testo',

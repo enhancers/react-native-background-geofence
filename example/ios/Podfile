@@ -12,6 +12,7 @@ node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 prepare_react_native_project!
 
 setup_permissions([
@@ -44,7 +45,7 @@ if linkage != nil
 end
 
 target 'BackgroundGeofenceExample' do
-  config = use_native_modules!
+  config = use_native_modules!(['npx', 'react-native', 'config'])
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -65,5 +66,12 @@ target 'BackgroundGeofenceExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Fix "never received target ended message" Xcode build system race condition
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'NO'
+      end
+    end
   end
 end

@@ -63,7 +63,11 @@ android {
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+    buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+  }
 
+  buildFeatures {
+    buildConfig true
   }
 
   buildTypes {
@@ -79,6 +83,16 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  sourceSets {
+    main {
+      if (isNewArchitectureEnabled()) {
+        java.srcDirs += ['src/newarch']
+      } else {
+        java.srcDirs += ['src/oldarch']
+      }
+    }
   }
 }
 
@@ -98,4 +112,3 @@ dependencies {
   implementation "org.greenrobot:eventbus:3.3.1"
   implementation "com.google.android.gms:play-services-location:21.0.1"
 }
-
